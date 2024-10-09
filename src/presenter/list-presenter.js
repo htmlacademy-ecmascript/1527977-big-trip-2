@@ -8,17 +8,20 @@ import {render, RenderPosition} from '../render.js';
 export default class ListPresenter {
   sortComponent = new SortView();
   listComponent = new ListView();
-  constructor({eventContainer}) {
+  constructor({eventContainer, pointsModel}) {
     this.eventContainer = eventContainer;
+    this.pointsModel = pointsModel;
   }
 
   init() {
+    this.listPoints = [...this.pointsModel.getPoints()];
+
     render(this.listComponent, this.eventContainer);
     render(this.sortComponent, this.eventContainer, RenderPosition.AFTERBEGIN);
     render(new FormAddPointView(), this.listComponent.getElement(), RenderPosition.AFTERBEGIN);
 
-    for (let i = 0; i < 3; i++) {
-      render(new PointView(), this.listComponent.getElement());
+    for (let i = 0; i < this.listPoints.length; i++) {
+      render(new PointView({point: this.listPoints[i]}), this.listComponent.getElement());
     }
     render(new FormEditPointView(), this.listComponent.getElement());
   }
