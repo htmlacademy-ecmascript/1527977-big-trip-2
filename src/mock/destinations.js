@@ -1,9 +1,9 @@
-export const mockDestinations = [
+export const destinations = [
   {
-    'id': 'cfe416cq-10xa-ye10-8077-2fs9a01edcab',
-    'description': 'Chamonix, is a beautiful city, a true asian pearl, with crowded streets.',
-    'name': 'Chamonix',
-    'pictures': [
+    id: 1,
+    description: 'Chamonix, is a beautiful city, a true asian pearl, with crowded streets.',
+    name: 'Chamonix',
+    pictures: [
       {
         'src': 'http://picsum.photos/300/200?r=0.0762563005163317',
         'description': 'Chamonix parliament building'
@@ -11,10 +11,10 @@ export const mockDestinations = [
     ]
   },
   {
-    'id': 'cfe416cq-10xa-ye10-8077-2fs9a01edca1',
-    'description': 'Amsterdam, is a beautiful city, a true asian pearl, with crowded streets.',
-    'name': 'Amsterdam',
-    'pictures': [
+    id: 2,
+    description: 'Amsterdam, is a beautiful city, a true asian pearl, with crowded streets.',
+    name: 'Amsterdam',
+    pictures: [
       {
         'src': 'http://picsum.photos/300/200?r=0.0762563005163318',
         'description': 'Amsterdam parliament building'
@@ -26,10 +26,10 @@ export const mockDestinations = [
     ]
   },
   {
-    'id': 'cfe416cq-10xa-ye10-8077-2fs9a01edca2',
-    'description': 'Geneva, is a beautiful city, a true asian pearl, with crowded streets.',
-    'name': 'Geneva',
-    'pictures': [
+    id: 3,
+    description: 'Geneva is a city in Switzerland that lies at the southern tip of expansive Lac Léman (Lake Geneva).',
+    name: 'Geneva',
+    pictures: [
       {
         'src': 'http://picsum.photos/300/200?r=0.0762563005163320',
         'description': 'Geneva parliament building'
@@ -37,10 +37,10 @@ export const mockDestinations = [
     ]
   },
   {
-    'id': 'cfe416cq-10xa-ye10-8077-2fs9a01edca3',
-    'description': '',
-    'name': 'Saturn',
-    'pictures': [
+    id: 4,
+    description: '',
+    name: 'Saturn',
+    pictures: [
     ]
   }
 ];

@@ -1,11 +1,16 @@
-export const mockOffers = [
+export const offers = [
   {
     'type': 'taxi',
     'offers': [
       {
-        'id': 'b4c3e4e6-9053-42ce-b747-e281314baa31',
+        'id': 1,
         'title': 'Upgrade to a business class',
         'price': 120
+      },
+      {
+        'id': 2,
+        'title': 'Order Uber',
+        'price': 20
       }
     ]
   },
@@ -13,7 +18,7 @@ export const mockOffers = [
     'type': 'train',
     'offers': [
       {
-        'id': 'b4c3e4e6-9053-42ce-b747-e281314baa32',
+        'id': 3,
         'title': 'coffee',
         'price': 10
       }
@@ -23,14 +28,49 @@ export const mockOffers = [
     'type': 'ship',
     'offers': [
       {
-        'id': 'b4c3e4e6-9053-42ce-b747-e281314baa33',
+        'id': 4,
         'title': 'Upgrade to a business class',
         'price': 100
       },
       {
-        'id': 'b4c3e4e6-9053-42ce-b747-e281314baa34',
+        'id': 5,
         'title': 'Upgrade to a first class',
         'price': 200
+      },
+      {
+        'id': 6,
+        'title': 'Add luggage',
+        'price': 50
+      }
+    ]
+  },
+  {
+    'type': 'flight',
+    'offers': [
+      {
+        'id': 7,
+        'title': 'Upgrade to a business class',
+        'price': 100
+      },
+      {
+        'id': 8,
+        'title': 'Upgrade to a first class',
+        'price': 200
+      },
+      {
+        'id': 9,
+        'title': 'Add meal',
+        'price': 15
+      },
+      {
+        'id': 10,
+        'title': 'Choose seats',
+        'price': 5
+      },
+      {
+        'id': 11,
+        'title': 'Add luggage',
+        'price': 50
       }
     ]
   }
