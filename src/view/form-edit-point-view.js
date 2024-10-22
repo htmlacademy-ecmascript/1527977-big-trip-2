@@ -1,11 +1,12 @@
 import { createElement } from '../render.js';
 import { POINTS_TYPES, FormatsDate } from '../const.js';
-import { formatDate, toUpperCaseFirstLetter } from '../utils.js';
+import { toUpperCaseFirstLetter } from '../utils/utils.js';
+import { formatDate } from '../utils/daijs.js';
 const formatOfferTitle = (title) => title.split(' ').join('_');
 
 const createFormEditPointTemplate = (point, destinations, offers) => {
-  const pointDestination = destinations.find((destination) => destination.id === point.destination);
-  const typeOffers = offers.find((off) => off.type === point.type).offers;
+  const pointDestination = destinations.find((destination) => destination.id === point.destination) || {};
+  const typeOffers = offers.find((off) => off.type === point.type)?.offers || [];
   const pointOffers = typeOffers.filter((typeOffer) => point.offers.includes(typeOffer.id));
   const { basePrice, dateFrom, dateTo, type } = point;
   const { name, description, pictures } = pointDestination || {};
@@ -42,11 +43,11 @@ const createFormEditPointTemplate = (point, destinations, offers) => {
   const destinationTemplate = `${pointDestination ? (
     `<section class="event__section  event__section--destination">
               <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-              <p class="event__destination-description">${description}</p>
-            ${pictures.length ? (
+              <p class="event__destination-description">${description || ''}</p>
+            ${pictures?.length ? (
       `<div class="event__photos-container">
                 <div class="event__photos-tape">
-                ${pictures.map((pic) => `<img class="event__photo" src="${pic.src}" alt="${pic.description}">`)}
+                ${pictures?.map((pic) => `<img class="event__photo" src="${pic.src}" alt="${pic.description}">`)}
                 </div>
               </div>`
     ) : ''}

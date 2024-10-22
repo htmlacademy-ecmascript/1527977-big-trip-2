@@ -18,11 +18,11 @@ export default class ListPresenter {
 
     render(new SortView(), this.eventContainer, RenderPosition.AFTERBEGIN);
     render(this.listComponent, this.eventContainer);
-    render(new FormEditPointView(getDefaultPoint(), destinations, offers), this.listComponent.getElement());
-    render(new FormEditPointView(points[1], destinations, offers), this.listComponent.getElement());
+    render(new FormEditPointView({point: getDefaultPoint(), destinations, offers}), this.listComponent.getElement());
+    render(new FormEditPointView({point: points[1], destinations, offers}), this.listComponent.getElement());
 
     for (const point of points) {
-      render(new PointView(point, destinations, offers), this.listComponent.getElement());
+      render(new PointView({point, destinations, offers}), this.listComponent.getElement());
     }
   }
 }

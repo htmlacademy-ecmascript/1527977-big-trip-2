@@ -1,10 +1,11 @@
 import { createElement } from '../render.js';
-import { formatDate, getDuration, toUpperCaseFirstLetter, isPointFavorite } from '../utils.js';
+import { toUpperCaseFirstLetter, isPointFavorite } from '../utils/utils.js';
+import { formatDate, getDuration } from '../utils/daijs.js';
 import { FormatsDate } from '../const.js';
 
 const createPointTemplate = (point, destinations, offers) => {
   const { basePrice, dateFrom, dateTo, type, isFavorite } = point;
-  const typeOffers = offers.find((off) => off.type === point.type).offers;
+  const typeOffers = offers.find((off) => off.type === point.type)?.offers || [];
   const pointOffers = typeOffers.filter((typeOffer) => point.offers.includes(typeOffer.id));
   const pointDestination = destinations.find((dest) => dest.id === point.destination);
 
