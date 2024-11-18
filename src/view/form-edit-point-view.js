@@ -1,6 +1,6 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { POINTS_TYPES, FormatsDate } from '../const.js';
-import { toUpperCaseFirstLetter } from '../utils/utils.js';
+import { toUpperCaseFirstLetter, toLowerCaseFirstLetter } from '../utils/utils.js';
 import { formatDate } from '../utils/daijs.js';
 const formatOfferTitle = (title) => title.split(' ').join('_');
 
@@ -16,8 +16,8 @@ const createFormEditPointTemplate = (point, destinations, offers) => {
     `<div class="event__type-item">
                 <input id="event-type-${pointType}-${pointId}" class="event__type-input  visually-hidden" type="radio"
                 name="event-type" value="${pointType}" ${pointType === type ? 'checked' : ''}>
-                <label class="event__type-label  event__type-label--${pointType}"
-                for="event-type-${pointType}-${pointId}">${toUpperCaseFirstLetter(pointType)}</label>
+                <label class="event__type-label  event__type-label--${toLowerCaseFirstLetter(pointType)}"
+                for="event-type-${toLowerCaseFirstLetter(pointType)}-${pointId}">${toUpperCaseFirstLetter(pointType)}</label>
               </div>`
   )).join('')}`;
 
@@ -61,7 +61,7 @@ const createFormEditPointTemplate = (point, destinations, offers) => {
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-${pointId}">
             <span class="visually-hidden">Choose event type</span>
-            <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="${type} icon">
+            <img class="event__type-icon" width="17" height="17" src="img/icons/${toUpperCaseFirstLetter(type)}.png" alt="${type} icon">
           </label>
           <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${pointId}" type="checkbox">
 
@@ -118,26 +118,34 @@ const createFormEditPointTemplate = (point, destinations, offers) => {
   );
 };
 
-export default class FormEditPointView {
-  constructor({point, destinations, offers}) {
-    this.point = point;
-    this.destinations = destinations;
-    this.offers = offers;
+export default class FormEditPointView extends AbstractView {
+  #point = null;
+  #destinations = null;
+  #offers = null;
+  #handlerFormSubmit;
+  #handlerEditClick;
+
+  constructor({point, destinations, offers, onFormSubmit, onEditClick}) {
+    super();
+    this.#point = point;
+    this.#destinations = destinations;
+    this.#offers = offers;
+    this.#handlerFormSubmit = onFormSubmit;
+    this.#handlerEditClick = onEditClick;
+
+    this.#setFormSubmitHandler();
+    this.#setEventListeners();
   }
 
-  getTemplate() {
-    return createFormEditPointTemplate(this.point, this.destinations, this.offers);
+  get template() {
+    return createFormEditPointTemplate(this.#point, this.#destinations, this.#offers);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
+  #setFormSubmitHandler = () => {
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#handlerFormSubmit);
+  };
 
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+  #setEventListeners() {
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#handlerEditClick);
   }
 }
