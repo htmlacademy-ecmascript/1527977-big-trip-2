@@ -5,8 +5,16 @@ export const destinations = [
     name: 'Chamonix',
     pictures: [
       {
-        'src': 'http://picsum.photos/300/200?r=0.0762563005163317',
+        'src': 'img/photos/1.jpg',
         'description': 'Chamonix parliament building'
+      },
+      {
+        'src': 'img/photos/2.jpg',
+        'description': 'Chamonix'
+      },
+      {
+        'src': 'img/photos/3.jpg',
+        'description': 'Chamonix river'
       }
     ]
   },
@@ -16,11 +24,11 @@ export const destinations = [
     name: 'Amsterdam',
     pictures: [
       {
-        'src': 'http://picsum.photos/300/200?r=0.0762563005163318',
+        'src': 'img/photos/2.jpg',
         'description': 'Amsterdam parliament building'
       },
       {
-        'src': 'http://picsum.photos/300/200?r=0.0762563005163319',
+        'src': 'img/photos/3.jpg',
         'description': 'Amsterdam river'
       }
     ]
@@ -31,7 +39,7 @@ export const destinations = [
     name: 'Geneva',
     pictures: [
       {
-        'src': 'http://picsum.photos/300/200?r=0.0762563005163320',
+        'src': 'img/photos/4.jpg',
         'description': 'Geneva parliament building'
       }
     ]
