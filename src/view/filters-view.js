@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import { createElement } from '../render';
 import { FILTER_TYPES } from '../const.js';
 import { toUpperCaseFirstLetter } from '../utils/utils.js';
 
@@ -19,8 +19,20 @@ function createFiltersTemplate() {
   );
 }
 
-export default class FiltersView extends AbstractView {
-  get template() {
+export default class FiltersView {
+  getTemplate() {
     return createFiltersTemplate();
+  }
+
+  getElement(){
+    if (!this.element) {
+      this.element = createElement(this.getTemplate());
+    }
+
+    return this.element;
+  }
+
+  removeElement(){
+    this.element = null;
   }
 }

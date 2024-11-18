@@ -1,3 +1,4 @@
+
 const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
@@ -5,8 +6,8 @@ const HtmlPlugin = require('html-webpack-plugin');
 module.exports = {
   entry: './src/main.js',
   output: {
-    filename: 'bundle.[contenthash].js',
     path: path.resolve(__dirname, 'build'),
+    filename: 'bundle.[contenthash].js',
     clean: true,
   },
   devtool: 'source-map',
@@ -21,7 +22,7 @@ module.exports = {
           globOptions: {
             ignore: ['**/index.html'],
           },
-        },
+        }
       ],
     }),
   ],
@@ -37,10 +38,6 @@ module.exports = {
           },
         },
       },
-      {
-        test: /\.css$/i,
-        use: ['style-loader', 'css-loader']
-      },
-    ],
-  },
+    ]
+  }
 };

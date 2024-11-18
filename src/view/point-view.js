@@ -1,6 +1,5 @@
-import AbstractView from '../framework/view/abstract-view.js';
-import { toUpperCaseFirstLetter } from '../utils/utils.js';
-import { isPointFavorite } from '../utils/points.js';
+import { createElement } from '../render.js';
+import { toUpperCaseFirstLetter, isPointFavorite } from '../utils/utils.js';
 import { formatDate, getDuration } from '../utils/daijs.js';
 import { FormatsDate } from '../const.js';
 
@@ -54,27 +53,26 @@ const createPointTemplate = (point, destinations, offers) => {
   );
 };
 
-export default class PointView extends AbstractView {
-  #point;
-  #destinations;
-  #offers;
-  #handlerEditClick;
-
-  constructor({point, destinations, offers, onEditClick}) {
-    super();
-    this.#point = point;
-    this.#destinations = destinations;
-    this.#offers = offers;
-    this.#handlerEditClick = onEditClick;
-
-    this.#setEventListeners();
+export default class PointView {
+  constructor({point, destinations, offers}) {
+    this.point = point;
+    this.destinations = destinations;
+    this.offers = offers;
   }
 
-  get template() {
-    return createPointTemplate(this.#point, this.#destinations, this.#offers);
+  getTemplate() {
+    return createPointTemplate(this.point, this.destinations, this.offers);
   }
 
-  #setEventListeners() {
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#handlerEditClick);
+  getElement(){
+    if (!this.element) {
+      this.element = createElement(this.getTemplate());
+    }
+
+    return this.element;
+  }
+
+  removeElement(){
+    this.element = null;
   }
 }

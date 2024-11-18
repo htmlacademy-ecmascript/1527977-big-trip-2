@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import { createElement } from '../render';
 import { SORT_TYPES, SORT_TYPES_BLOCK } from '../const.js';
 import { toUpperCaseFirstLetter } from '../utils/utils.js';
 
@@ -18,8 +18,20 @@ function createSortTemplate() {
   );
 }
 
-export default class SortView extends AbstractView {
-  get template() {
+export default class SortView {
+  getTemplate() {
     return createSortTemplate();
+  }
+
+  getElement(){
+    if (!this.element) {
+      this.element = createElement(this.getTemplate());
+    }
+
+    return this.element;
+  }
+
+  removeElement(){
+    this.element = null;
   }
 }
