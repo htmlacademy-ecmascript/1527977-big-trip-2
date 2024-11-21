@@ -2,10 +2,12 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import durationPlugin from 'dayjs/plugin/duration';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import isBetween from 'dayjs/plugin/isBetween';
 
 dayjs.extend(customParseFormat);
 dayjs.extend(durationPlugin);
 dayjs.extend(isSameOrBefore);
+dayjs.extend(isBetween);
 
 const formatDate = (date, view) => date ? dayjs(date).format(view) : '';
 
@@ -45,4 +47,8 @@ const getDuration = (startInput, endInput) => {
   return formattedDuration;
 };
 
-export { formatDate, getDuration };
+const isEventFuture = ({dateFrom}) => dayjs(dateFrom).isAfter(dayjs());
+const isEventPresent = ({dateFrom, dateTo}) => dayjs(new Date()).isBetween(dateFrom, dayjs(dateTo));
+const isEventPast = ({dateTo}) => dayjs(dateTo).isBefore(dayjs());
+
+export { formatDate, getDuration, isEventFuture, isEventPresent, isEventPast };

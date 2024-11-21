@@ -6,7 +6,12 @@ export const SORT_TYPES = ['day', 'event', 'time', 'price', 'offer'];
 
 export const SORT_TYPES_BLOCK = ['event', 'offer'];
 
-export const FILTER_TYPES = ['everything', 'future', 'present', 'past'];
+export const FilterTypes = {
+  EVERYTHING : 'everything',
+  FUTURE: 'future',
+  PRESENT: 'present',
+  PAST: 'past',
+};
 
 export const MessageText = {
   LOADING: 'Loading...',

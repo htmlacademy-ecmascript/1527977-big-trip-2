@@ -7,6 +7,7 @@ import PointView from '../view/point-view.js';
 import ButtonNewEventView from '../view/button-new-event-view.js';
 import Message from '../view/message-view.js';
 import ListView from '../view/list-view.js';
+import {generateFilter} from '../mock/filter.js';
 
 export default class ListPresenter {
   #headerContainer;
@@ -14,13 +15,13 @@ export default class ListPresenter {
   #pointModel;
   #destinationsModel;
   #offersModel;
-  #filters = new FiltersView();
   #sorting = new SortView();
   #buttonNewEvent = new ButtonNewEventView();
   #listComponent = new ListView();
   #points = [];
-  #destinations;
-  #offers;
+  #destinations = [];
+  #offers = [];
+  #filters = [];
 
   constructor({ headerContainer, eventContainer, pointModel, destinationsModel, offersModel }) {
     this.#headerContainer = headerContainer;
@@ -34,6 +35,7 @@ export default class ListPresenter {
     this.#points = [...this.#pointModel.points];
     this.#destinations = [...this.#destinationsModel.destinations];
     this.#offers = [...this.#offersModel.offers];
+    this.#filters = new FiltersView({filters: generateFilter(this.#points)});
 
     this.#renderApp();
   }
@@ -84,6 +86,7 @@ export default class ListPresenter {
   }
 
   #renderApp() {
+
     render(this.#filters, this.#headerContainer);
     render(this.#buttonNewEvent, this.#headerContainer, RenderPosition.AFTEREND);
     if (this.#points.length === 0) {
