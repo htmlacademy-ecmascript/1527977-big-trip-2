@@ -4,6 +4,8 @@ function getRandomArrayElement(items) {
 
 const toUpperCaseFirstLetter = (str) => `${str[0].toUpperCase()}${str.slice(1)}`;
 
-const isPointFavorite = (isFavorite) => isFavorite ? 'event__favorite-btn--active' : '';
+const toLowerCaseFirstLetter = (str) => `${str[0].toLowerCase()}${str.slice(1)}`;
 
-export {getRandomArrayElement, toUpperCaseFirstLetter, isPointFavorite};
+const isEscapeKey = (evt) => evt.key === 'Escape';
+
+export {getRandomArrayElement, toUpperCaseFirstLetter, toLowerCaseFirstLetter, isEscapeKey};
