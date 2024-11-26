@@ -8,6 +8,7 @@ import ButtonNewEventView from '../view/button-new-event-view.js';
 import Message from '../view/message-view.js';
 import ListView from '../view/list-view.js';
 import {generateFilter} from '../mock/filter.js';
+import { MessageText } from '../const.js';
 
 export default class ListPresenter {
   #headerContainer;
@@ -90,7 +91,7 @@ export default class ListPresenter {
     render(this.#filters, this.#headerContainer);
     render(this.#buttonNewEvent, this.#headerContainer, RenderPosition.AFTEREND);
     if (this.#points.length === 0) {
-      render(new Message(), this.#eventContainer);
+      render(new Message(MessageText.this.#filters.FilterTypes), this.#eventContainer);
       return;
     }
     render(this.#listComponent, this.#eventContainer);
