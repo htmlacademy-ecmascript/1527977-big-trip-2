@@ -8,4 +8,8 @@ const toLowerCaseFirstLetter = (str) => `${str[0].toLowerCase()}${str.slice(1)}`
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
-export {getRandomArrayElement, toUpperCaseFirstLetter, toLowerCaseFirstLetter, isEscapeKey};
+function updateItem(items, update) {
+  return items.map((item) => item.id === update.id ? update : item);
+}
+
+export {getRandomArrayElement, toUpperCaseFirstLetter, toLowerCaseFirstLetter, isEscapeKey, updateItem};

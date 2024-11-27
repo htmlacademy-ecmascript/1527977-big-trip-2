@@ -51,4 +51,4 @@ const isEventFuture = ({dateFrom}) => dayjs(dateFrom).isAfter(dayjs());
 const isEventPresent = ({dateFrom, dateTo}) => dayjs(new Date()).isBetween(dateFrom, dayjs(dateTo));
 const isEventPast = ({dateTo}) => dayjs(dateTo).isBefore(dayjs());
 
-export { formatDate, getDuration, isEventFuture, isEventPresent, isEventPast };
+export { dayjs, formatDate, getDuration, isEventFuture, isEventPresent, isEventPast };

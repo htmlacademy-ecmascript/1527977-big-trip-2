@@ -143,6 +143,7 @@ export default class FormEditPointView extends AbstractView {
 
   #setFormSubmitHandler = () => {
     this.element.querySelector('.event--edit').addEventListener('submit', this.#handlerFormSubmit);
+    this.#handlerFormSubmit(this.#point);
   };
 
   #setEventListeners() {

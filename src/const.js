@@ -2,7 +2,13 @@ export const DESTINATIONS = ['Amsterdam', 'Chamonix', 'Geneva'];
 
 export const POINTS_TYPES = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];
 
-export const SORT_TYPES = ['day', 'event', 'time', 'price', 'offer'];
+export const SortTypes = {
+  DAY: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFER: 'offer',
+};
 
 export const SORT_TYPES_BLOCK = ['event', 'offer'];
 
@@ -28,4 +34,9 @@ export const FormatsDate = {
   DATE_FULL: 'YYYY-MM-DD',
   DATE_TIME: 'DD/MM/YY HH:mm',
   DATE_TIME_FULL: 'YYYY-MM-DDTHH:mm',
+};
+
+export const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
 };
