@@ -3,15 +3,13 @@ import { isEscapeKey } from '../utils/utils.js';
 import PointView from '../view/point-view.js';
 import FormEditPointView from '../view/form-edit-point-view.js';
 import { Mode } from '../const';
-
 export default class PointPresenter {
-  #eventContainer;
-  #handleDataChange;
-  #handleModeChange;
-
-  #pointComponent;
-  #formEditPoint;
-  #point;
+  #eventContainer = null;
+  #handleDataChange = null;
+  #handleModeChange = null;
+  #pointComponent = null;
+  #formEditPoint = null;
+  #point = null;
   #destinations = [];
   #offers = [];
   #mode = Mode.DEFAULT;
@@ -45,9 +43,8 @@ export default class PointPresenter {
       point: this.#point,
       destinations: this.#destinations,
       offers: this.#offers,
-      onFormSubmit: (evt, currentPoint) => {
+      onFormSubmit: (currentPoint) => {
         this.#handleDataChange(currentPoint);
-        evt.preventDefault();
         this.replaceFormToPoint();
         document.removeEventListener('keydown', this.escKeyDownHandler);
       },
@@ -57,7 +54,7 @@ export default class PointPresenter {
       }
     });
 
-    if (prevPointComponent === null || prevFormEditPoint === null) {
+    if (!prevPointComponent || !prevFormEditPoint) {
       render(this.#pointComponent, this.#eventContainer);
       return;
     }

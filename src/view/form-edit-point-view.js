@@ -5,23 +5,23 @@ import { formatDate } from '../utils/daijs.js';
 const formatOfferTitle = (title) => title.split(' ').join('_');
 
 const createFormEditPointTemplate = (point, destinations, offers) => {
-  const pointDestination = destinations.find((destination) => destination.id === point.destination) || {};
-  const typeOffers = offers.find((off) => off.type === point.type)?.offers || [];
+  const pointDestination = Array.isArray(destinations) ? destinations.find((dest) => dest.id === point.destination) : {};
+  const typeOffers = Array.isArray(offers) ? offers.find((off) => off.type === point.type)?.offers || [] : [];
   const pointOffers = typeOffers.filter((typeOffer) => point.offers.includes(typeOffer.id));
   const { basePrice, dateFrom, dateTo, type } = point;
   const { name, description, pictures } = pointDestination || {};
   const pointId = point.id || 0;
 
-  const pointTypeTemplate = `${POINTS_TYPES.map((pointType) => (
+  const pointTypeTemplate = `${Array.isArray(POINTS_TYPES) ? POINTS_TYPES.map((pointType) => (
     `<div class="event__type-item">
                 <input id="event-type-${pointType}-${pointId}" class="event__type-input  visually-hidden" type="radio"
                 name="event-type" value="${pointType}" ${pointType === type ? 'checked' : ''}>
                 <label class="event__type-label  event__type-label--${toLowerCaseFirstLetter(pointType)}"
                 for="event-type-${toLowerCaseFirstLetter(pointType)}-${pointId}">${toUpperCaseFirstLetter(pointType)}</label>
               </div>`
-  )).join('')}`;
+  )).join('') : ''}`;
 
-  const offresTemplate = `${typeOffers.length ?
+  const offresTemplate = `${Array.isArray(typeOffers) && typeOffers.length ?
     `<section class="event__section  event__section--offers">
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
               <div class="event__available-offers">
@@ -44,10 +44,10 @@ const createFormEditPointTemplate = (point, destinations, offers) => {
     `<section class="event__section  event__section--destination">
               <h3 class="event__section-title  event__section-title--destination">Destination</h3>
               <p class="event__destination-description">${description || ''}</p>
-            ${pictures?.length ? (
+            ${Array.isArray(pictures) && pictures.length ? (
       `<div class="event__photos-container">
                 <div class="event__photos-tape">
-                ${pictures?.map((pic) => `<img class="event__photo" src="${pic.src}" alt="${pic.description}">`)}
+                ${pictures.map((pic) => `<img class="event__photo" src="${pic.src}" alt="${pic.description}">`).join('')}
                 </div>
               </div>`
     ) : ''}
@@ -79,7 +79,9 @@ const createFormEditPointTemplate = (point, destinations, offers) => {
           <input class="event__input  event__input--destination" id="event-destination-${pointId}" type="text" name="event-destination"
             value="${name || ''}" list="destination-list-${pointId}">
           <datalist id="destination-list-${pointId}">
-              ${destinations.map((destination) => `<option value="${destination.name}"></option>`).join('')}
+            ${Array.isArray(destinations) && destinations.length ? (
+      `${destinations.map((destination) => `<option value="${destination.name}"></option>`).join('')}`
+    ) : ''}
           </datalist>
         </div>
 
@@ -142,11 +144,14 @@ export default class FormEditPointView extends AbstractView {
   }
 
   #setFormSubmitHandler = () => {
-    this.element.querySelector('.event--edit').addEventListener('submit', this.#handlerFormSubmit);
-    this.#handlerFormSubmit(this.#point);
+    this.element.querySelector('.event--edit').addEventListener('submit', (evt) => {
+      evt.preventDefault();
+      this.#handlerFormSubmit(this.#point);
+    });
   };
 
   #setEventListeners() {
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#handlerEditClick);
+    this.element.querySelector('.event__save-btn').addEventListener('click', this.#handlerEditClick);
   }
 }

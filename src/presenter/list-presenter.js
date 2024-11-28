@@ -12,12 +12,12 @@ import {sortPointDay, sortPointPrice, sortPointTime} from '../utils/points.js';
 import {SortTypes} from '../const.js';
 
 export default class ListPresenter {
-  #headerContainer;
-  #eventContainer;
-  #pointModel;
-  #destinationsModel;
-  #offersModel;
-  #sorting;
+  #headerContainer = null;
+  #eventContainer = null;
+  #pointModel = null;
+  #destinationsModel = null;
+  #offersModel = null;
+  #sorting = null;
   #buttonNewEvent = new ButtonNewEventView();
   #listComponent = new ListView();
   #points = [];
@@ -52,21 +52,30 @@ export default class ListPresenter {
       onDataChange: this.#handlePointChange,
       onModeChange: this.#handleModeChange
     });
-    pointPresenter.init(point);
+
+    pointPresenter.init(point, this.#destinations, this.#offers);
     this.#pointPresenters.set(point.id, pointPresenter);
   }
 
   #clearPointList() {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
-    // this.#renderedTaskCount = TASK_COUNT_PER_STEP;
-    // remove(this.#loadMoreButtonComponent);
   }
 
   #handlePointChange = (updatedPoint) => {
+    if (!updatedPoint) {
+      return;
+    }
+
     this.#eventContainer = updateItem(this.#eventContainer, updatedPoint);
     this.#sourcedPoints = updateItem(this.#sourcedPoints, updatedPoint);
-    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
+
+    const pointPresenter = this.#pointPresenters.get(updatedPoint.id);
+    if (!pointPresenter) {
+      return;
+    }
+
+    pointPresenter.init(updatedPoint);
   };
 
   #handleModeChange = () => {
@@ -88,13 +97,13 @@ export default class ListPresenter {
   #sortPoints(sortType) {
     switch (sortType) {
       case SortTypes.DAY:
-        this.#eventContainer.sort(sortPointDay);
+        this.#eventContainer.toSorted(sortPointDay);
         break;
       case SortTypes.PRICE:
-        this.#eventContainer.sort(sortPointPrice);
+        this.#eventContainer.toSorted(sortPointPrice);
         break;
       case SortTypes.TIME:
-        this.#eventContainer.sort(sortPointTime);
+        this.#eventContainer.toSorted(sortPointTime);
         break;
       default:
         this.#eventContainer = [...this.#sourcedPoints];
@@ -117,7 +126,7 @@ export default class ListPresenter {
     this.#sorting = new SortView({
       onSortTypeChange: this.#handleSortTypeChange
     });
-    render(this.#sorting, this.#eventContainer);
+    render(this.#sorting, this.#eventContainer, RenderPosition.AFTERBEGIN);
   }
 
   #renderListComponent() {
