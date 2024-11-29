@@ -6,9 +6,9 @@ import { FormatsDate } from '../const.js';
 
 const createPointTemplate = (point, destinations, offers) => {
   const { basePrice, dateFrom, dateTo, type, isFavorite } = point;
-  const typeOffers = offers.find((off) => off.type === point.type)?.offers || [];
+  const typeOffers = Array.isArray(offers) ? offers.find((off) => off.type === point.type)?.offers || [] : [];
   const pointOffers = typeOffers.filter((typeOffer) => point.offers.includes(typeOffer.id));
-  const pointDestination = destinations.find((dest) => dest.id === point.destination);
+  const pointDestination = Array.isArray(destinations) ? destinations.find((dest) => dest.id === point.destination) : null;
 
   return (
     `<li class="trip-events__item">
@@ -59,15 +59,19 @@ export default class PointView extends AbstractView {
   #destinations;
   #offers;
   #handlerEditClick;
+  #handleFavoriteClick;
 
-  constructor({point, destinations, offers, onEditClick}) {
+  constructor({point, destinations, offers, onEditClick, onFavoriteClick,}) {
     super();
     this.#point = point;
     this.#destinations = destinations;
     this.#offers = offers;
     this.#handlerEditClick = onEditClick;
+    this.#handleFavoriteClick = onFavoriteClick;
 
     this.#setEventListeners();
+    this.#setFavoriteListeners();
+
   }
 
   get template() {
@@ -76,5 +80,9 @@ export default class PointView extends AbstractView {
 
   #setEventListeners() {
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#handlerEditClick);
+  }
+
+  #setFavoriteListeners() {
+    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#handleFavoriteClick);
   }
 }
