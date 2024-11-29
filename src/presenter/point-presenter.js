@@ -14,16 +14,16 @@ export default class PointPresenter {
   #offers = [];
   #mode = Mode.DEFAULT;
 
-  constructor({ eventContainer, onDataChange, onModeChange }) {
+  constructor({ eventContainer, onDataChange, onModeChange, destinations, offers}) {
     this.#eventContainer = eventContainer;
     this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
-  }
-
-  init(point, destinations, offers) {
-    this.#point = point;
     this.#destinations = destinations;
     this.#offers = offers;
+  }
+
+  init(point) {
+    this.#point = point;
 
     const prevPointComponent = this.#pointComponent;
     const prevFormEditPoint = this.#formEditPoint;

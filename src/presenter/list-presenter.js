@@ -49,11 +49,13 @@ export default class ListPresenter {
   #renderPoint(point) {
     const pointPresenter = new PointPresenter({
       eventContainer: this.#listComponent.element,
+      destinations: this.#destinations,
+      offers: this.#offers,
       onDataChange: this.#handlePointChange,
       onModeChange: this.#handleModeChange
     });
 
-    pointPresenter.init(point, this.#destinations, this.#offers);
+    pointPresenter.init(point);
     this.#pointPresenters.set(point.id, pointPresenter);
   }
 
@@ -66,10 +68,7 @@ export default class ListPresenter {
     if (!updatedPoint) {
       return;
     }
-
-    this.#eventContainer = updateItem(this.#eventContainer, updatedPoint);
-    this.#sourcedPoints = updateItem(this.#sourcedPoints, updatedPoint);
-
+    this.#points = updateItem(this.#sourcedPoints, updatedPoint);
     const pointPresenter = this.#pointPresenters.get(updatedPoint.id);
     if (!pointPresenter) {
       return;
