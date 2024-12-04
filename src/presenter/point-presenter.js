@@ -33,25 +33,19 @@ export default class PointPresenter {
       destinations: this.#destinations,
       offers: this.#offers,
       onFavoriteClick: this.#handleFavoriteClick,
-      onEditClick: () => {
-        this.replacePointToForm();
-        document.addEventListener('keydown', this.escKeyDownHandler);
-      }
+      onEditClick: this.#handlerEditClick,
     });
 
     this.#formEditPoint = new FormEditPointView({
       point: this.#point,
       destinations: this.#destinations,
       offers: this.#offers,
-      onFormSubmit: (currentPoint) => {
-        this.#handleDataChange(currentPoint);
-        this.replaceFormToPoint();
-        document.removeEventListener('keydown', this.escKeyDownHandler);
-      },
-      onEditClick: () => {
-        this.replaceFormToPoint();
-        document.removeEventListener('keydown', this.escKeyDownHandler);
-      }
+      onTypePointChange: this.#handleTypePointChange,
+      onOfferChange: this.#handleOfferChange,
+      onDestinationChange: this.#handleDestinationChange,
+      onPriceChange: this.#handlePriceChange,
+      onFormSubmit: this.#handlerFormSubmit,
+      onEditClick: this.#handlerEditClick,
     });
 
     if (!prevPointComponent || !prevFormEditPoint) {
@@ -71,6 +65,11 @@ export default class PointPresenter {
     remove(prevFormEditPoint);
   }
 
+  resetCurrentDestinationsAndOffers = () => {
+    this.#formEditPoint.reset(this.#point, this.#destinations, this.#offers);
+    this.replaceFormToPoint();
+  };
+
   destroy() {
     remove(this.#pointComponent);
     remove(this.#formEditPoint);
@@ -78,17 +77,32 @@ export default class PointPresenter {
 
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
-      this.replaceFormToPoint();
+      this.resetCurrentDestinationsAndOffers();
     }
   }
 
   escKeyDownHandler = (evt) => {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
-      this.replaceFormToPoint();
+      this.resetCurrentDestinationsAndOffers();
       document.removeEventListener('keydown', this.escKeyDownHandler);
     }
   };
+
+  #handlerEditClick() {
+    this.replacePointToForm();
+    document.addEventListener('keydown', this.escKeyDownHandler);
+  }
+
+  #handlerFormSubmit(currentPoint, evt) {
+    evt.preventDefault();
+    this.replaceFormToPoint();
+    if(!currentPoint) {
+      return;
+    }
+    this.#handleDataChange(currentPoint);
+    document.removeEventListener('keydown', this.escKeyDownHandler);
+  }
 
   replacePointToForm() {
     replace(this.#formEditPoint, this.#pointComponent);
@@ -103,5 +117,49 @@ export default class PointPresenter {
 
   #handleFavoriteClick = () => {
     this.#handleDataChange({ ...this.#point, isFavorite: !this.#point.isFavorite });
+  };
+
+  #handleTypePointChange = (evt) => {
+    const newType = evt.target.value;
+    const newOffers = this.pointOffers.find((offer) => offer.type === newType)?.offers || [];
+    this.updateElement({
+      point: {
+        ...this._state.point,
+        type: newType,
+        offers: newOffers
+      }
+    });
+  };
+
+  #handleOfferChange = () => {
+    const checkedOffers = Array.from(this.element.querySelectorAll('.event__offer-checkbox:checked'));
+    this._setState({
+      point: {
+        ...this._state.point,
+        offers: checkedOffers.map((item) => item.dataset.offerId)
+      }
+    });
+  };
+
+  #handleDestinationChange = (evt) => {
+    const currentDestination = this.destinations.find((pointDestination) =>
+      pointDestination.name === evt.target.value);
+    const currentDestinationId = currentDestination ? currentDestination.id : null;
+
+    this.updateElement({
+      point: {
+        ...this._state.point,
+        destination: currentDestinationId
+      }
+    });
+  };
+
+  #handlePriceChange = (evt) => {
+    this._setState({
+      point: {
+        ...this._state.point,
+        basePrice: evt.target.value,
+      }
+    });
   };
 }

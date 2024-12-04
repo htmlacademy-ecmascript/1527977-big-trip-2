@@ -141,8 +141,6 @@ export default class ListPresenter {
     }
     this.#renderListComponent();
     this.#renderSorting();
-    for (const point of this.#points) {
-      this.#renderPoint(point);
-    }
+    this.#points.forEach((point) => this.#renderPoint(point));
   }
 }
