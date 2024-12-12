@@ -21,25 +21,27 @@ export default class ListPresenter {
   #buttonNewEvent = new ButtonNewEventView();
   #listComponent = new ListView();
   #points = [];
-  #destinations = [];
-  #offers = [];
   #filters = [];
   #pointPresenters = new Map();
   #currentSortType = SortTypes.DAY;
   #sourcedPoints = [];
 
-  constructor({ headerContainer, eventContainer, pointModel, destinationsModel, offersModel }) {
+  constructor({
+    headerContainer,
+    eventContainer,
+    pointModel,
+    destinationsModel,
+    offersModel
+  }) {
     this.#headerContainer = headerContainer;
     this.#eventContainer = eventContainer;
     this.#pointModel = pointModel;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
+    this.#points = [...this.#pointModel.points];
   }
 
   init() {
-    this.#points = [...this.#pointModel.points];
-    this.#destinations = [...this.#destinationsModel.destinations];
-    this.#offers = [...this.#offersModel.offers];
     this.#filters = new FiltersView({filters: generateFilter(this.#points)});
     this.#sourcedPoints = [...this.#pointModel.points];
 
@@ -49,8 +51,8 @@ export default class ListPresenter {
   #renderPoint(point) {
     const pointPresenter = new PointPresenter({
       eventContainer: this.#listComponent.element,
-      destinations: this.#destinations,
-      offers: this.#offers,
+      destinationsModel: this.#destinationsModel,
+      offersModel: this.#offersModel,
       onDataChange: this.#handlePointChange,
       onModeChange: this.#handleModeChange
     });
@@ -58,6 +60,13 @@ export default class ListPresenter {
     pointPresenter.init(point);
     this.#pointPresenters.set(point.id, pointPresenter);
   }
+
+  #renderPoints() {
+    for (const point of this.#points) {
+      this.#renderPoint(point);
+    }
+  }
+
 
   #clearPointList() {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
@@ -141,6 +150,6 @@ export default class ListPresenter {
     }
     this.#renderListComponent();
     this.#renderSorting();
-    this.#points.forEach((point) => this.#renderPoint(point));
+    this.#renderPoints();
   }
 }

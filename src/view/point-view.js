@@ -4,11 +4,8 @@ import { isPointFavorite } from '../utils/points.js';
 import { formatDate, getDuration } from '../utils/daijs.js';
 import { FormatsDate } from '../const.js';
 
-const createPointTemplate = (point, destinations, offers) => {
+const createPointTemplate = (point, pointDestination, pointOffers) => {
   const { basePrice, dateFrom, dateTo, type, isFavorite } = point;
-  const typeOffers = Array.isArray(offers) ? offers.find((off) => off.type === point.type)?.offers || [] : [];
-  const pointOffers = typeOffers.filter((typeOffer) => point.offers.includes(typeOffer.id));
-  const pointDestination = Array.isArray(destinations) ? destinations.find((dest) => dest.id === point.destination) : null;
 
   return (
     `<li class="trip-events__item">
@@ -31,13 +28,13 @@ const createPointTemplate = (point, destinations, offers) => {
           </p>
           <h4 class="visually-hidden">Offers:</h4>
           <ul class="event__selected-offers">
-          ${pointOffers.map((offer) => (
+          ${pointOffers.length > 0 ? pointOffers.map((offer) => (
       `<li class="event__offer">
               <span class="event__offer-title">${offer.title}</span>
               &plus;&euro;&nbsp;
               <span class="event__offer-price">${offer.price}</span>
             </li>`
-    )).join('')}
+    )).join('') : ''}
 
           </ul>
           <button class="event__favorite-btn ${isPointFavorite(isFavorite)}" type="button">
@@ -56,16 +53,16 @@ const createPointTemplate = (point, destinations, offers) => {
 
 export default class PointView extends AbstractView {
   #point;
-  #destinations;
-  #offers;
+  #pointDestination;
+  #pointOffers;
   #handlerEditClick;
   #handleFavoriteClick;
 
-  constructor({point, destinations, offers, onEditClick, onFavoriteClick,}) {
+  constructor({point, pointDestination, pointOffers, onEditClick, onFavoriteClick}) {
     super();
     this.#point = point;
-    this.#destinations = destinations;
-    this.#offers = offers;
+    this.#pointDestination = pointDestination;
+    this.#pointOffers = pointOffers;
     this.#handlerEditClick = onEditClick;
     this.#handleFavoriteClick = onFavoriteClick;
 
@@ -75,7 +72,7 @@ export default class PointView extends AbstractView {
   }
 
   get template() {
-    return createPointTemplate(this.#point, this.#destinations, this.#offers);
+    return createPointTemplate(this.#point, this.#pointDestination, this.#pointOffers);
   }
 
   #setEventListeners() {

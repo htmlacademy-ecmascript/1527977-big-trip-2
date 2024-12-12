@@ -14,16 +14,17 @@ const createPointTypeTemplate = (pointId, type) =>
     </div>`
   )).join('') : '';
 
-const createOffresTemplate = (pointId, typeOffers, pointOffers = []) =>
-  Array.isArray(typeOffers) && typeOffers.length ?
+const createOffresTemplate = (pointId, pointOffers, pointOffersAll) =>
+  Array.isArray(pointOffers) && pointOffers.length ?
     `<section class="event__section event__section--offers">
       <h3 class="event__section-title event__section-title--offers">Offers</h3>
       <div class="event__available-offers">
-      ${typeOffers.map((typeOffer) => (
+      ${pointOffers.map((typeOffer) => (
     `<div class="event__offer-selector">
        <input class="event__offer-checkbox visually-hidden" id="event-offer-${formatOfferTitle(typeOffer.title)}-${pointId}"
-        type="checkbox" name="event-offer-${formatOfferTitle(typeOffer.title)}" ${Array.isArray(pointOffers) && pointOffers.map((offer) => offer.id).includes(typeOffer.id) ? 'checked' : ''}
-        data-offer-id="${formatOfferTitle(typeOffer.title)}-${pointId}">
+        type="checkbox" name="event-offer-${formatOfferTitle(typeOffer.title)}"
+        ${Array.isArray(pointOffersAll) && pointOffersAll.map((offer) => offer.id).includes(typeOffer.id) ? 'checked' : ''}
+        data-offer-id="${typeOffer.id}">
         <label class="event__offer-label" for="event-offer-${typeOffer.title}-${pointId}">
           <span class="event__offer-title">${typeOffer.title}</span>
             &plus;&euro;&nbsp;
@@ -36,7 +37,7 @@ const createOffresTemplate = (pointId, typeOffers, pointOffers = []) =>
     : '';
 
 const createDestinationTemplate = (pointDestination) => {
-  if (!pointDestination) {
+  if (!pointDestination || !pointDestination.description) {
     return '';
   }
   const { description, pictures } = pointDestination || {};
@@ -70,13 +71,13 @@ const createTypeWrapperTemplate = (pointId, type) =>
     </div>
   </div>`;
 
-const createInputDestinationTemplate = (pointId, destinations, type, name) =>
+const createInputDestinationTemplate = (pointId, destinations, type, destinationName) =>
   `<div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-${pointId}">
             ${type}
           </label>
           <input class="event__input  event__input--destination" id="event-destination-${pointId}"
-            type="text" name="event-destination" value=""${name || ''}" list="destination-list-${pointId}">
+            type="text" name="event-destination" value="${destinationName || ''}" list="destination-list-${pointId}">
           <datalist id="destination-list-${pointId}">
             ${Array.isArray(destinations) && destinations.length ? (
     `${destinations.map((destination) => `<option value="${destination.name}"></option>`).join('')}`
@@ -113,7 +114,7 @@ const createButtonsTemplate = (pointId) =>
   </button>`
   ) : ''}`;
 
-export const createFormTemplate = (pointId, type, destinations, name, dateFrom, dateTo, basePrice, typeOffers, pointOffers, pointDestination) =>
+export const createFormTemplate = (pointId, type, destinations, name, dateFrom, dateTo, basePrice, pointOffers, pointOffersAll, pointDestination) =>
   `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
       <header class="event__header">
@@ -124,7 +125,7 @@ export const createFormTemplate = (pointId, type, destinations, name, dateFrom, 
         ${createButtonsTemplate(pointId)}
       </header>
           <section class="event__details">
-          ${createOffresTemplate(pointId, typeOffers, pointOffers)}
+          ${createOffresTemplate(pointId, pointOffers, pointOffersAll)}
           ${createDestinationTemplate(pointDestination)}
         </section>
       </form>

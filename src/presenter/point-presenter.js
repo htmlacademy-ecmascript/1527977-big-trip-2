@@ -10,16 +10,22 @@ export default class PointPresenter {
   #pointComponent = null;
   #formEditPoint = null;
   #point = null;
-  #destinations = [];
-  #offers = [];
+  #destinationsModel = null;
+  #offersModel = null;
   #mode = Mode.DEFAULT;
 
-  constructor({ eventContainer, onDataChange, onModeChange, destinations, offers}) {
+  constructor({
+    eventContainer,
+    onDataChange,
+    onModeChange,
+    destinationsModel,
+    offersModel
+  }) {
     this.#eventContainer = eventContainer;
     this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
-    this.#destinations = destinations;
-    this.#offers = offers;
+    this.#destinationsModel = destinationsModel;
+    this.#offersModel = offersModel;
   }
 
   init(point) {
@@ -30,22 +36,35 @@ export default class PointPresenter {
 
     this.#pointComponent = new PointView({
       point: this.#point,
-      destinations: this.#destinations,
-      offers: this.#offers,
+      pointDestination: this.#destinationsModel.getDestinationById(point.destination),
+      pointOffers: this.#offersModel.getOffersByType(point.type),
       onFavoriteClick: this.#handleFavoriteClick,
-      onEditClick: this.#handlerEditClick,
+      onEditClick: () => {
+        this.replacePointToForm();
+        document.addEventListener('keydown', this.escKeyDownHandler);
+      }
     });
 
     this.#formEditPoint = new FormEditPointView({
       point: this.#point,
-      destinations: this.#destinations,
-      offers: this.#offers,
-      onTypePointChange: this.#handleTypePointChange,
-      onOfferChange: this.#handleOfferChange,
-      onDestinationChange: this.#handleDestinationChange,
-      onPriceChange: this.#handlePriceChange,
-      onFormSubmit: this.#handlerFormSubmit,
-      onEditClick: this.#handlerEditClick,
+      pointDestination: this.#destinationsModel.getDestinationById(point.destination),
+      pointOffers: this.#offersModel.getOffersByType(point.type),
+      pointDestinations: this.#destinationsModel.destinations,
+      pointOffersAll: this.#offersModel.offers,
+
+      onFormSubmit: (currentPoint) => {
+        if(!currentPoint) {
+          return;
+        }
+        this.#handleDataChange(currentPoint);
+        this.replaceFormToPoint();
+
+        document.removeEventListener('keydown', this.escKeyDownHandler);
+      },
+      onEditClick: () => {
+        this.replaceFormToPoint();
+        document.removeEventListener('keydown', this.escKeyDownHandler);
+      }
     });
 
     if (!prevPointComponent || !prevFormEditPoint) {
@@ -66,7 +85,8 @@ export default class PointPresenter {
   }
 
   resetCurrentDestinationsAndOffers = () => {
-    this.#formEditPoint.reset(this.#point, this.#destinations, this.#offers);
+    // this.#formEditPoint.reset(this.#point, this.pointDestinations, this.pointOffersAll);
+    this.#formEditPoint.reset();
     this.replaceFormToPoint();
   };
 
@@ -89,77 +109,18 @@ export default class PointPresenter {
     }
   };
 
-  #handlerEditClick() {
-    this.replacePointToForm();
-    document.addEventListener('keydown', this.escKeyDownHandler);
-  }
-
-  #handlerFormSubmit(currentPoint, evt) {
-    evt.preventDefault();
-    this.replaceFormToPoint();
-    if(!currentPoint) {
-      return;
-    }
-    this.#handleDataChange(currentPoint);
-    document.removeEventListener('keydown', this.escKeyDownHandler);
-  }
-
-  replacePointToForm() {
+  replacePointToForm = () => {
     replace(this.#formEditPoint, this.#pointComponent);
     this.#handleModeChange();
     this.#mode = Mode.EDITING;
-  }
+  };
 
-  replaceFormToPoint() {
+  replaceFormToPoint = () => {
     replace(this.#pointComponent, this.#formEditPoint);
     this.#mode = Mode.DEFAULT;
-  }
+  };
 
   #handleFavoriteClick = () => {
     this.#handleDataChange({ ...this.#point, isFavorite: !this.#point.isFavorite });
-  };
-
-  #handleTypePointChange = (evt) => {
-    const newType = evt.target.value;
-    const newOffers = this.pointOffers.find((offer) => offer.type === newType)?.offers || [];
-    this.updateElement({
-      point: {
-        ...this._state.point,
-        type: newType,
-        offers: newOffers
-      }
-    });
-  };
-
-  #handleOfferChange = () => {
-    const checkedOffers = Array.from(this.element.querySelectorAll('.event__offer-checkbox:checked'));
-    this._setState({
-      point: {
-        ...this._state.point,
-        offers: checkedOffers.map((item) => item.dataset.offerId)
-      }
-    });
-  };
-
-  #handleDestinationChange = (evt) => {
-    const currentDestination = this.destinations.find((pointDestination) =>
-      pointDestination.name === evt.target.value);
-    const currentDestinationId = currentDestination ? currentDestination.id : null;
-
-    this.updateElement({
-      point: {
-        ...this._state.point,
-        destination: currentDestinationId
-      }
-    });
-  };
-
-  #handlePriceChange = (evt) => {
-    this._setState({
-      point: {
-        ...this._state.point,
-        basePrice: evt.target.value,
-      }
-    });
   };
 }
