@@ -67,7 +67,6 @@ export default class ListPresenter {
     }
   }
 
-
   #clearPointList() {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();

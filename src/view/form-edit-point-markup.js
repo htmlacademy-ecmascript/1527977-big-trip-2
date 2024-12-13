@@ -1,37 +1,35 @@
-import { POINTS_TYPES, FormatsDate } from '../const.js';
-import { toUpperCaseFirstLetter, toLowerCaseFirstLetter } from '../utils/utils.js';
+import { FormatsDate, POINTS_TYPES } from '../const.js';
 import { formatDate } from '../utils/daijs.js';
-
-const formatOfferTitle = (title) => title.split(' ').join('_');
+import {toUpperCaseFirstLetter } from '../utils/utils.js';
 
 const createPointTypeTemplate = (pointId, type) =>
   Array.isArray (POINTS_TYPES) ? POINTS_TYPES.map((pointType) => (
     `<div class="event__type-item">
-      <input id="event-type-${toLowerCaseFirstLetter(pointType)}-${pointId}" class="event__type-input  visually-hidden" type="radio"
+      <input id="event-type-${pointType.toLocaleLowerCase()}-${pointId}" class="event__type-input  visually-hidden" type="radio"
       name="event-type" value="${pointType}" ${pointType === type ? 'checked' : ''}>
-      <label class="event__type-label  event__type-label--${toLowerCaseFirstLetter(pointType)}"
-      for="event-type-${toLowerCaseFirstLetter(pointType)}-${pointId}">${toUpperCaseFirstLetter(pointType)}</label>
+      <label class="event__type-label  event__type-label--${pointType.toLocaleLowerCase()}"
+      for="event-type-${pointType.toLocaleLowerCase()}-${pointId}">${toUpperCaseFirstLetter(pointType)}</label>
     </div>`
   )).join('') : '';
 
-const createOffresTemplate = (pointId, pointOffers, pointOffersAll) =>
-  Array.isArray(pointOffers) && pointOffers.length ?
+const createOffresTemplate = (currentPointOffers, offersByType) =>
+  Array.isArray(offersByType) && offersByType.length ?
     `<section class="event__section event__section--offers">
       <h3 class="event__section-title event__section-title--offers">Offers</h3>
       <div class="event__available-offers">
-      ${pointOffers.map((typeOffer) => (
-    `<div class="event__offer-selector">
-       <input class="event__offer-checkbox visually-hidden" id="event-offer-${formatOfferTitle(typeOffer.title)}-${pointId}"
-        type="checkbox" name="event-offer-${formatOfferTitle(typeOffer.title)}"
-        ${Array.isArray(pointOffersAll) && pointOffersAll.map((offer) => offer.id).includes(typeOffer.id) ? 'checked' : ''}
-        data-offer-id="${typeOffer.id}">
-        <label class="event__offer-label" for="event-offer-${typeOffer.title}-${pointId}">
-          <span class="event__offer-title">${typeOffer.title}</span>
-            &plus;&euro;&nbsp;
-          <span class="event__offer-price">${typeOffer.price}</span>
-        </label>
-      </div>`
-  )).join('')}
+        ${offersByType.reduce((markup, {title, id, price}) => `${markup}
+        <div class="event__offer-selector">
+          <input class="event__offer-checkbox visually-hidden" id="event-offer-${title}-${id}"
+            type="checkbox" name="event-offer-${title}"
+
+          ${currentPointOffers.find((offerID) => offerID === id) ? 'checked' : ''}
+            data-offer-id="${id}">
+            <label class="event__offer-label" for="event-offer-${title}-${id}">
+              <span class="event__offer-title">${title}</span>
+                &plus;&euro;&nbsp;
+              <span class="event__offer-price">${price}</span>
+            </label>
+        </div>`, '')}
     </div>
     </section>`
     : '';
@@ -114,7 +112,7 @@ const createButtonsTemplate = (pointId) =>
   </button>`
   ) : ''}`;
 
-export const createFormTemplate = (pointId, type, destinations, name, dateFrom, dateTo, basePrice, pointOffers, pointOffersAll, pointDestination) =>
+export const createFormTemplate = (pointId, type, destinations, name, dateFrom, dateTo, basePrice, currentPointOffers, offers, currentPointDestination) =>
   `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
       <header class="event__header">
@@ -125,8 +123,8 @@ export const createFormTemplate = (pointId, type, destinations, name, dateFrom, 
         ${createButtonsTemplate(pointId)}
       </header>
           <section class="event__details">
-          ${createOffresTemplate(pointId, pointOffers, pointOffersAll)}
-          ${createDestinationTemplate(pointDestination)}
+          ${createOffresTemplate(offers, currentPointOffers)}
+          ${createDestinationTemplate(currentPointDestination)}
         </section>
       </form>
     </li>`;

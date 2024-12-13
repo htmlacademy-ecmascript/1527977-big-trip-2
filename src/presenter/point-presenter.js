@@ -1,8 +1,8 @@
-import { render, replace, remove } from '../framework/render.js';
-import { isEscapeKey } from '../utils/utils.js';
-import PointView from '../view/point-view.js';
-import FormEditPointView from '../view/form-edit-point-view.js';
 import { Mode } from '../const';
+import { remove, render, replace } from '../framework/render.js';
+import { isEscapeKey } from '../utils/utils.js';
+import FormEditPointView from '../view/form-edit-point-view.js';
+import PointView from '../view/point-view.js';
 export default class PointPresenter {
   #eventContainer = null;
   #handleDataChange = null;
@@ -47,8 +47,6 @@ export default class PointPresenter {
 
     this.#formEditPoint = new FormEditPointView({
       point: this.#point,
-      pointDestination: this.#destinationsModel.getDestinationById(point.destination),
-      pointOffers: this.#offersModel.getOffersByType(point.type),
       pointDestinations: this.#destinationsModel.destinations,
       pointOffersAll: this.#offersModel.offers,
 
@@ -56,6 +54,7 @@ export default class PointPresenter {
         if(!currentPoint) {
           return;
         }
+
         this.#handleDataChange(currentPoint);
         this.replaceFormToPoint();
 
@@ -85,7 +84,6 @@ export default class PointPresenter {
   }
 
   resetCurrentDestinationsAndOffers = () => {
-    // this.#formEditPoint.reset(this.#point, this.pointDestinations, this.pointOffersAll);
     this.#formEditPoint.reset();
     this.replaceFormToPoint();
   };

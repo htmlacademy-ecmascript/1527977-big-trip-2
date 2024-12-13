@@ -1,18 +1,17 @@
+import flatpickr from 'flatpickr';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { createFormTemplate } from './form-edit-point-markup.js';
-import { toLowerCaseFirstLetter } from '../utils/utils.js';
-import flatpickr from 'flatpickr';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
 const createFormEditPointTemplate = ({state, pointDestinations, pointOffersAll}) => {
-  const { basePrice, dateFrom, dateTo, type } = state.point;
-  const pointDestination = Array.isArray(pointDestinations) ? pointDestinations.find((dest) => dest.id === state.point.destination) : {};
-  const typeOffers = Array.isArray(pointOffersAll) ? pointOffersAll.find((offer) => offer.type === state.point.type)?.offers || [] : [];
+  const { basePrice, dateFrom, dateTo, type, offers } = state.point;
+  const currentPointDestination = pointDestinations.find(({id}) => id === state.point.destination);
+  const currentPointOffers = pointOffersAll.find((offer) => offer.type === type).offers;
   const pointId = state.point.id || 0;
-  const name = pointDestination.name || '';
+  const name = currentPointDestination.name || '';
 
-  return createFormTemplate(pointId, type, pointDestinations, name, dateFrom, dateTo, basePrice, typeOffers, pointOffersAll, pointDestination);
+  return createFormTemplate(pointId, type, pointDestinations, name, dateFrom, dateTo, basePrice, currentPointOffers, offers, currentPointDestination);
 };
 
 export default class FormEditPointView extends AbstractStatefulView {
@@ -50,7 +49,6 @@ export default class FormEditPointView extends AbstractStatefulView {
     });
   }
 
-  // reset = (point) => this.updateElement({point});
   reset() {
     this.updateElement({
       ...this.#basicPoint,
@@ -74,13 +72,13 @@ export default class FormEditPointView extends AbstractStatefulView {
   };
 
   _restoreHandlers = () => {
-    this.element.querySelector('.event__rollup-btn')?.addEventListener('click', this.#handlerEditClick);
-    this.element.querySelector('.event__save-btn')?.addEventListener('click', this.#handlerEditClick);
-    this.element.querySelector('.event--edit')?.addEventListener('submit', this.#handlerFormSubmit);
-    this.element.querySelector('.event__type-group')?.addEventListener('change', this.#handlerTypePointChange);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#handlerEditClick);
+    this.element.querySelector('.event__save-btn').addEventListener('click', this.#handlerFormSubmit);
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#handlerFormSubmit);
+    this.element.querySelector('.event__type-group').addEventListener('change', this.#handlerTypePointChange);
     this.element.querySelector('.event__available-offers')?.addEventListener('change', this.#handlerOfferChange);
-    this.element.querySelector('.event__input--destination')?.addEventListener('change', this.#handlerDestinationChange);
-    this.element.querySelector('.event__input--price')?.addEventListener('change', this.#handlerPriceChange);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#handlerDestinationChange);
+    this.element.querySelector('.event__input--price').addEventListener('change', this.#handlerPriceChange);
 
     this.#setDatepickers();
   };
@@ -92,14 +90,11 @@ export default class FormEditPointView extends AbstractStatefulView {
   };
 
   #handlerTypePointChange = (evt) => {
-    const newType = evt.target.value;
-    const newTypeOffers = this.#pointOffersAll.find((offer) => offer.type === toLowerCaseFirstLetter(`${newType}`))?.offers || [];
-    console.log(newTypeOffers);
     this.updateElement({
       point: {
         ...this._state.point,
-        type: newType,
-        typeOffers: newTypeOffers
+        type: evt.target.value.toLowerCase(),
+        offers: []
       },
     });
   };

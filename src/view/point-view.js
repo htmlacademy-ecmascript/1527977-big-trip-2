@@ -1,11 +1,12 @@
-import AbstractView from '../framework/view/abstract-view.js';
-import { toUpperCaseFirstLetter } from '../utils/utils.js';
-import { isPointFavorite } from '../utils/points.js';
-import { formatDate, getDuration } from '../utils/daijs.js';
 import { FormatsDate } from '../const.js';
+import AbstractView from '../framework/view/abstract-view.js';
+import { formatDate, getDuration } from '../utils/daijs.js';
+import { isPointFavorite } from '../utils/points.js';
+import { toUpperCaseFirstLetter } from '../utils/utils.js';
 
 const createPointTemplate = (point, pointDestination, pointOffers) => {
   const { basePrice, dateFrom, dateTo, type, isFavorite } = point;
+  const currentPointOffer = pointOffers.filter((offer) => point.offers.includes(offer.id));
 
   return (
     `<li class="trip-events__item">
@@ -28,7 +29,7 @@ const createPointTemplate = (point, pointDestination, pointOffers) => {
           </p>
           <h4 class="visually-hidden">Offers:</h4>
           <ul class="event__selected-offers">
-          ${pointOffers.length > 0 ? pointOffers.map((offer) => (
+          ${currentPointOffer.length > 0 ? currentPointOffer.map((offer) => (
       `<li class="event__offer">
               <span class="event__offer-title">${offer.title}</span>
               &plus;&euro;&nbsp;
