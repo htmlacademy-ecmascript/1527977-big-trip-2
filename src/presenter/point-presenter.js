@@ -1,8 +1,8 @@
-import { render, replace, remove } from '../framework/render.js';
-import { isEscapeKey } from '../utils/utils.js';
-import PointView from '../view/point-view.js';
-import FormEditPointView from '../view/form-edit-point-view.js';
 import { Mode } from '../const';
+import { remove, render, replace } from '../framework/render.js';
+import { isEscapeKey } from '../utils/utils.js';
+import FormEditPointView from '../view/form-edit-point-view.js';
+import PointView from '../view/point-view.js';
 export default class PointPresenter {
   #eventContainer = null;
   #handleDataChange = null;
@@ -10,16 +10,22 @@ export default class PointPresenter {
   #pointComponent = null;
   #formEditPoint = null;
   #point = null;
-  #destinations = [];
-  #offers = [];
+  #destinationsModel = null;
+  #offersModel = null;
   #mode = Mode.DEFAULT;
 
-  constructor({ eventContainer, onDataChange, onModeChange, destinations, offers}) {
+  constructor({
+    eventContainer,
+    onDataChange,
+    onModeChange,
+    destinationsModel,
+    offersModel
+  }) {
     this.#eventContainer = eventContainer;
     this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
-    this.#destinations = destinations;
-    this.#offers = offers;
+    this.#destinationsModel = destinationsModel;
+    this.#offersModel = offersModel;
   }
 
   init(point) {
@@ -30,8 +36,8 @@ export default class PointPresenter {
 
     this.#pointComponent = new PointView({
       point: this.#point,
-      destinations: this.#destinations,
-      offers: this.#offers,
+      pointDestination: this.#destinationsModel.getDestinationById(point.destination),
+      pointOffers: this.#offersModel.getOffersByType(point.type),
       onFavoriteClick: this.#handleFavoriteClick,
       onEditClick: () => {
         this.replacePointToForm();
@@ -41,11 +47,17 @@ export default class PointPresenter {
 
     this.#formEditPoint = new FormEditPointView({
       point: this.#point,
-      destinations: this.#destinations,
-      offers: this.#offers,
+      pointDestinations: this.#destinationsModel.destinations,
+      pointOffersAll: this.#offersModel.offers,
+
       onFormSubmit: (currentPoint) => {
+        if(!currentPoint) {
+          return;
+        }
+
         this.#handleDataChange(currentPoint);
         this.replaceFormToPoint();
+
         document.removeEventListener('keydown', this.escKeyDownHandler);
       },
       onEditClick: () => {
@@ -71,6 +83,11 @@ export default class PointPresenter {
     remove(prevFormEditPoint);
   }
 
+  resetCurrentDestinationsAndOffers = () => {
+    this.#formEditPoint.reset();
+    this.replaceFormToPoint();
+  };
+
   destroy() {
     remove(this.#pointComponent);
     remove(this.#formEditPoint);
@@ -78,28 +95,28 @@ export default class PointPresenter {
 
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
-      this.replaceFormToPoint();
+      this.resetCurrentDestinationsAndOffers();
     }
   }
 
   escKeyDownHandler = (evt) => {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
-      this.replaceFormToPoint();
+      this.resetCurrentDestinationsAndOffers();
       document.removeEventListener('keydown', this.escKeyDownHandler);
     }
   };
 
-  replacePointToForm() {
+  replacePointToForm = () => {
     replace(this.#formEditPoint, this.#pointComponent);
     this.#handleModeChange();
     this.#mode = Mode.EDITING;
-  }
+  };
 
-  replaceFormToPoint() {
+  replaceFormToPoint = () => {
     replace(this.#pointComponent, this.#formEditPoint);
     this.#mode = Mode.DEFAULT;
-  }
+  };
 
   #handleFavoriteClick = () => {
     this.#handleDataChange({ ...this.#point, isFavorite: !this.#point.isFavorite });
