@@ -1,3 +1,4 @@
+import he from 'he';
 import { FormatsDate, POINTS_TYPES } from '../const.js';
 import { formatDate } from '../utils/daijs.js';
 import {toUpperCaseFirstLetter } from '../utils/utils.js';
@@ -100,7 +101,8 @@ const createPriceTemplate = (pointId, basePrice) =>
         <span class="visually-hidden">Price</span>
                 &euro;
       </label>
-      <input class="event__input  event__input--price" id="event-price-${pointId}" type="text" name="event-price" value="${basePrice}">
+      <input class="event__input  event__input--price" id="event-price-${pointId}"
+      type="text" name="event-price" value="${he.encode(String(basePrice))}">
     </div>`;
 
 const createButtonsTemplate = (pointId) =>

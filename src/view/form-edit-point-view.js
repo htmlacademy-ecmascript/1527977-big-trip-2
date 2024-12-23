@@ -18,6 +18,7 @@ export default class FormEditPointView extends AbstractStatefulView {
   #basicPoint = null;
   #pointDestinations = [];
   #pointOffersAll = [];
+  #handleDeleteClick = null;
   #onFormSubmit = null;
   #handlerEditClick = null;
   #datepickerFrom = null;
@@ -27,6 +28,7 @@ export default class FormEditPointView extends AbstractStatefulView {
     point,
     pointDestinations,
     pointOffersAll,
+    onDeleteClick,
     onFormSubmit,
     onEditClick,
   }) {
@@ -34,6 +36,7 @@ export default class FormEditPointView extends AbstractStatefulView {
     this.#basicPoint = point;
     this.#pointDestinations = pointDestinations;
     this.#pointOffersAll = pointOffersAll;
+    this.#handleDeleteClick = onDeleteClick;
     this.#onFormSubmit = onFormSubmit;
     this.#handlerEditClick = onEditClick;
 
@@ -79,6 +82,7 @@ export default class FormEditPointView extends AbstractStatefulView {
     this.element.querySelector('.event__available-offers')?.addEventListener('change', this.#handlerOfferChange);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#handlerDestinationChange);
     this.element.querySelector('.event__input--price').addEventListener('change', this.#handlerPriceChange);
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
 
     this.#setDatepickers();
   };
@@ -176,6 +180,11 @@ export default class FormEditPointView extends AbstractStatefulView {
       },
     });
     this.#datepickerFrom.set('maxDate', this._state.point.dateTo);
+  };
+
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleDeleteClick(this._state.point);
   };
 
   static parsePointToState = ({point}) => ({point});

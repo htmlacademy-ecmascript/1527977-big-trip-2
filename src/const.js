@@ -10,7 +10,11 @@ export const SortTypes = {
   OFFER: 'offer',
 };
 
+export const SORT_TYPE_DEFAULT = 'day';
+
 export const SORT_TYPES_BLOCK = ['event', 'offer'];
+
+export const FILTER_TYPE_DEFAULT = 'everything';
 
 export const FilterTypes = {
   EVERYTHING : 'everything',
@@ -39,4 +43,17 @@ export const FormatsDate = {
 export const Mode = {
   DEFAULT: 'DEFAULT',
   EDITING: 'EDITING',
+  ADD: 'ADD',
+};
+
+export const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT',
+};
+
+export const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
 };

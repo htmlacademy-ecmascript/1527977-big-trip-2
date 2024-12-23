@@ -1,9 +1,11 @@
 import { destinations } from '../mock/destinations.js';
+import Observable from '../framework/observable.js';
 
-export default class DestinationsModel {
+export default class DestinationsModel extends Observable {
   #destinations;
 
   constructor() {
+    super();
     this.#destinations = [];
   }
 

@@ -31,4 +31,14 @@ function sortPointTime(pointA, pointB) {
   return getWeightForNullDate(durationA, durationB) ?? durationB.diff(durationA);
 }
 
-export { isPointFavorite, sortPointDay, sortPointPrice, sortPointTime };
+function isEqualPoints(point, newPoint) {
+  return (
+    point.dateFrom !== newPoint.dateFrom
+    ||
+    point.dateTo !== newPoint.dateTo
+    ||
+    point.basePrice !== newPoint.basePrice
+  );
+}
+
+export { isPointFavorite, sortPointDay, sortPointPrice, sortPointTime, isEqualPoints };
