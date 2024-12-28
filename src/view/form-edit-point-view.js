@@ -1,41 +1,50 @@
 import flatpickr from 'flatpickr';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { createFormTemplate } from './form-edit-point-markup.js';
-
 import 'flatpickr/dist/flatpickr.min.css';
+import {EditMode, POINT_EMPTY} from '../const.js';
 
-const createFormEditPointTemplate = ({state, pointDestinations, pointOffersAll}) => {
+const createFormEditPointTemplate = ({state, pointDestinations, pointOffersAll, editMode}) => {
   const { basePrice, dateFrom, dateTo, type, offers } = state.point;
-  const currentPointDestination = pointDestinations.find(({id}) => id === state.point.destination);
-  const currentPointOffers = pointOffersAll.find((offer) => offer.type === type).offers;
+  const currentPointDestination = pointDestinations?.find(({id}) => id === state.point.destination);
+  const currentPointOffers = pointOffersAll?.find((offer) => offer.type === type)?.offers;
   const pointId = state.point.id || 0;
-  const name = currentPointDestination.name || '';
+  const name = currentPointDestination?.name || '';
 
-  return createFormTemplate(pointId, type, pointDestinations, name, dateFrom, dateTo, basePrice, currentPointOffers, offers, currentPointDestination);
+  return createFormTemplate(pointId, type, pointDestinations, name, dateFrom, dateTo, basePrice, currentPointOffers, offers, currentPointDestination, editMode);
 };
 
 export default class FormEditPointView extends AbstractStatefulView {
   #basicPoint = null;
   #pointDestinations = [];
   #pointOffersAll = [];
+  #editMode = null;
   #onFormSubmit = null;
   #handlerEditClick = null;
+  #handleDeleteClick = null;
+  #handleCancelClick = null;
   #datepickerFrom = null;
   #datepickerTo = null;
 
   constructor({
-    point,
+    point = POINT_EMPTY,
     pointDestinations,
     pointOffersAll,
+    editMode,
     onFormSubmit,
     onEditClick,
+    onDeleteClick,
+    onCancelClick
   }) {
     super();
     this.#basicPoint = point;
     this.#pointDestinations = pointDestinations;
     this.#pointOffersAll = pointOffersAll;
+    this.#editMode = editMode;
     this.#onFormSubmit = onFormSubmit;
     this.#handlerEditClick = onEditClick;
+    this.#handleDeleteClick = onDeleteClick;
+    this.#handleCancelClick = onCancelClick;
 
     this._setState(FormEditPointView.parsePointToState({point}));
     this._restoreHandlers();
@@ -46,6 +55,7 @@ export default class FormEditPointView extends AbstractStatefulView {
       state: this._state,
       pointDestinations: this.#pointDestinations,
       pointOffersAll: this.#pointOffersAll,
+      editMode: this.#editMode
     });
   }
 
@@ -72,8 +82,15 @@ export default class FormEditPointView extends AbstractStatefulView {
   };
 
   _restoreHandlers = () => {
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#handlerEditClick);
-    this.element.querySelector('.event__save-btn').addEventListener('click', this.#handlerFormSubmit);
+    if(this.#editMode === EditMode.ADD) {
+      this.element.querySelector('.event--edit').addEventListener('reset', this.#formCancelClickHander);
+
+    }
+    if(this.#editMode === EditMode.EDIT) {
+      this.element.querySelector('.event--edit').addEventListener('reset', this.#formDeleteClickHandler);
+    }
+
+    this.element.querySelector('.event__rollup-btn')?.addEventListener('click', this.#handlerEditClick);
     this.element.querySelector('.event--edit').addEventListener('submit', this.#handlerFormSubmit);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#handlerTypePointChange);
     this.element.querySelector('.event__available-offers')?.addEventListener('change', this.#handlerOfferChange);
@@ -176,6 +193,16 @@ export default class FormEditPointView extends AbstractStatefulView {
       },
     });
     this.#datepickerFrom.set('maxDate', this._state.point.dateTo);
+  };
+
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleDeleteClick(this._state.point);
+  };
+
+  #formCancelClickHander = (evt) => {
+    evt.preventDefault();
+    this.#handleCancelClick();
   };
 
   static parsePointToState = ({point}) => ({point});
