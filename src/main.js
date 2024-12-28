@@ -4,6 +4,7 @@ import OffersModel from './model/offers-model.js';
 import FilterModel from './model/filter-model.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import BoardPresenter from './presenter/board-presenter.js';
+import ButtonNewEventPresenter from './presenter/button-new-event-presenter.js';
 
 const siteContent = document.querySelector('.trip-events');
 const siteMainHeader = document.querySelector('.page-header');
@@ -18,6 +19,10 @@ const offersModel = new OffersModel();
 offersModel.init();
 const filterModel = new FilterModel();
 
+const buttonNewEventPresenter = new ButtonNewEventPresenter({
+  headerContainer: siteHeaderElement
+});
+
 const filterPresenter = new FilterPresenter({
   filterContainer: siteFilterContainer,
   filterModel: filterModel,
@@ -31,7 +36,13 @@ const boardPresenter = new BoardPresenter({
   destinationsModel: destinationsModel,
   offersModel: offersModel,
   filterModel: filterModel,
+  buttonNewEventPresenter: buttonNewEventPresenter,
 });
 
+buttonNewEventPresenter.init({
+  onAddPointButtonClick: () => {
+    boardPresenter.addPointButtonClickHandler();
+  }
+});
 filterPresenter.init();
 boardPresenter.init();

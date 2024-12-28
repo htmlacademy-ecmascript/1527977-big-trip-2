@@ -1,21 +1,18 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
-function createFilterItemTemplate(filter, currentFilterType) {
-  const {type, count} = filter;
-
+function createFilterItemTemplate({type, isChecked, isDisabled}) {
   return (
     `<div class="trip-filters__filter">
-        <input id="filter-${type}" class="trip-filters__filter-input visually-hidden" type="radio" name="trip-filter"
-         value="${type}" ${type === currentFilterType ? 'checked' : ''} ${count === 0 ? 'disabled' : ''}/>
+        <input id="filter-${type}" class="trip-filters__filter-input visually-hidden" type="radio" name="trip-filter" data-item="${type}"
+         value="${type}" ${isChecked ? 'checked' : ''} ${isDisabled ? 'disabled' : ''}/>
         <label class="trip-filters__filter-label" for="filter-${type}">${type}</label>
       </div>`
   );
 }
 
-function createFilterTemplate(filterItems, currentFilterType) {
-
-  const filterItemsTemplate = filterItems
-    .map((filter, index) => createFilterItemTemplate(filter, currentFilterType, index === 0))
+function createFilterTemplate(items) {
+  const filterItemsTemplate = items
+    .map((item) => createFilterItemTemplate(item))
     .join('');
 
   return (
@@ -28,23 +25,20 @@ function createFilterTemplate(filterItems, currentFilterType) {
 
 export default class FiltersView extends AbstractView {
   #filters = null;
-  #currentFilter = null;
   #handleFilterTypeChange = null;
 
   constructor({
-    filters,
-    currentFilterType,
-    onFilterTypeChange
+    items,
+    onItemChange
   }) {
     super();
-    this.#filters = filters;
-    this.#currentFilter = currentFilterType;
-    this.#handleFilterTypeChange = onFilterTypeChange;
+    this.#filters = items;
+    this.#handleFilterTypeChange = onItemChange;
     this.element.addEventListener('change', this.#filterTypeChangeHandler);
   }
 
   get template() {
-    return createFilterTemplate(this.#filters, this.#currentFilter);
+    return createFilterTemplate(this.#filters);
   }
 
   #filterTypeChangeHandler = (evt) => {

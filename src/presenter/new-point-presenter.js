@@ -1,27 +1,27 @@
 import {remove, render, RenderPosition} from '../framework/render.js';
 import FormEditPointView from '../view/form-edit-point-view.js';
 import {nanoid} from 'nanoid';
-import {Mode, UserAction, UpdateType} from '../const.js';
+import {EditMode, UserAction, UpdateType} from '../const.js';
 import { isEscapeKey } from '../utils/utils.js';
 
 export default class NewPointPresenter {
   #pointListContainer = null;
-  #destinationsModel = null;
-  #offersModel = null;
+  #destinations = null;
+  #offers = null;
   #addPointComponent = null;
   #handleDataChange = null;
   #handleDestroy = null;
 
-
   constructor({
     pointListContainer,
-    destinationsModel,
-    offersModel,
+    destinations,
+    offers,
     onDataChange,
-    onDestroy}) {
+    onDestroy
+  }) {
     this.#pointListContainer = pointListContainer;
-    this.#destinationsModel = destinationsModel;
-    this.#offersModel = offersModel;
+    this.#destinations = destinations;
+    this.#offers = offers;
     this.#handleDataChange = onDataChange;
     this.#handleDestroy = onDestroy;
   }
@@ -31,11 +31,13 @@ export default class NewPointPresenter {
       return;
     }
     this.#addPointComponent = new FormEditPointView({
-      destinationsModel: this.#destinationsModel,
-      offersModel: this.#offersModel,
+      destinations: this.#destinations,
+      offers: this.#offers,
       onFormSubmit: this.#handleFormSubmit,
       onDeleteClick: this.#handleDeleteClick,
-      mode: Mode.ADD,
+      editMode: EditMode.ADD,
+      // onFormSubmit: this.#formSubmitHandler,
+      // onFormResetCancel: this.#formResetCancelHandler
     });
     render(this.#addPointComponent, this.#pointListContainer, RenderPosition.AFTERBEGIN);
     document.addEventListener('keydown', this.#escKeyDownHandler);

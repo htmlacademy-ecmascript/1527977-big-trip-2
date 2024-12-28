@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { SortTypes, SORT_TYPES_BLOCK } from '../const.js';
 import { toUpperCaseFirstLetter } from '../utils/utils.js';
+import {SortTypes, SORT_TYPES_BLOCK} from '../const.js';
 
 const sortTypeTemplate = (currentSortType) =>
   `${Object.values(SortTypes).map((sortType) => (
@@ -24,7 +24,10 @@ export default class SortView extends AbstractView {
   #currentSortType = null;
   #handleSortTypeChange;
 
-  constructor({currentSortType, onSortTypeChange}) {
+  constructor({
+    currentSortType,
+    onSortTypeChange
+  }) {
     super();
     this.#currentSortType = currentSortType;
     this.#handleSortTypeChange = onSortTypeChange;
@@ -36,10 +39,12 @@ export default class SortView extends AbstractView {
   }
 
   #sortTypeChangeHandler = (evt) => {
-    if (evt.target.tagName !== 'A') {
+    const targetElement = evt.target.closest('.trip-sort__input');
+    if (!targetElement){
       return;
     }
+
     evt.preventDefault();
-    this.#handleSortTypeChange(evt.target.dataset.sortType);
+    this.#handleSortTypeChange(targetElement.dataset.sortType);
   };
 }

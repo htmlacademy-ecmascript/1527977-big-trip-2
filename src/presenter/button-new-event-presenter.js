@@ -2,9 +2,13 @@ import {render, RenderPosition} from '../framework/render.js';
 import ButtonNewEventView from '../view/button-new-event-view.js';
 
 export default class ButtonNewEventPresenter {
-  #headerContainer = document.querySelector('.trip-main');
+  #headerContainer = null;
   #buttonNewEvent = null;
   #addPointButtonClickHandler = null;
+
+  constructor({headerContainer}) {
+    this.#headerContainer = headerContainer;
+  }
 
   init({onAddPointButtonClick}) {
     this.#addPointButtonClickHandler = onAddPointButtonClick;

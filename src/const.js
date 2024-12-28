@@ -1,34 +1,44 @@
-export const DESTINATIONS = ['Amsterdam', 'Chamonix', 'Geneva'];
-
 export const POINTS_TYPES = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];
 
-export const SortTypes = {
-  DAY: 'day',
-  EVENT: 'event',
-  TIME: 'time',
-  PRICE: 'price',
-  OFFER: 'offer',
+export const DEFAULT_POINT_TYPE = 'Flight';
+
+export const POINT_EMPTY = {
+  basePrice: 0,
+  dateFrom: null,
+  dateTo: null,
+  destination: null,
+  isFavorite: false,
+  offers: [],
+  type: DEFAULT_POINT_TYPE,
 };
 
-export const SORT_TYPE_DEFAULT = 'day';
+export const SortTypes = {
+  DAY: 'DAY',
+  EVENT: 'EVENT',
+  TIME: 'TIME',
+  PRICE: 'PRICE',
+  OFFER: 'OFFER',
+};
 
-export const SORT_TYPES_BLOCK = ['event', 'offer'];
+export const SORT_TYPE_DEFAULT = 'DAY';
 
-export const FILTER_TYPE_DEFAULT = 'everything';
+export const SORT_TYPES_BLOCK = ['EVENT', 'OFFER'];
+
+export const FILTER_TYPE_DEFAULT = 'EVERYTHING';
 
 export const FilterTypes = {
-  EVERYTHING : 'everything',
-  FUTURE: 'future',
-  PRESENT: 'present',
-  PAST: 'past',
+  EVERYTHING : 'EVERYTHING',
+  FUTURE: 'FUTURE',
+  PRESENT: 'PRESENT',
+  PAST: 'PAST',
 };
 
 export const MessageText = {
   LOADING: 'Loading...',
-  LIST_EMPTY__EVERYTHING: 'Click New Event to create your first point',
-  LIST_EMPTY__PAST: 'There are no past events now',
-  LIST_EMPTY__PRESENT: 'There are no present events now',
-  LIST_EMPTY__FUTURE: 'There are no future events now',
+  EVERYTHING: 'Click New Event to create your first point',
+  PAST: 'There are no past events now',
+  PRESENT: 'There are no present events now',
+  FUTURE: 'There are no future events now',
   FAIL: 'Failed to load latest route information',
 };
 
@@ -43,7 +53,11 @@ export const FormatsDate = {
 export const Mode = {
   DEFAULT: 'DEFAULT',
   EDITING: 'EDITING',
+};
+
+export const EditMode = {
   ADD: 'ADD',
+  EDIT: 'EDIT'
 };
 
 export const UserAction = {

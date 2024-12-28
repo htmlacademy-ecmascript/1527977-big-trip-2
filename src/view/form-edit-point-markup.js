@@ -1,5 +1,5 @@
 import he from 'he';
-import { FormatsDate, POINTS_TYPES } from '../const.js';
+import { FormatsDate, POINTS_TYPES, EditMode } from '../const.js';
 import { formatDate } from '../utils/daijs.js';
 import {toUpperCaseFirstLetter } from '../utils/utils.js';
 
@@ -105,16 +105,16 @@ const createPriceTemplate = (pointId, basePrice) =>
       type="text" name="event-price" value="${he.encode(String(basePrice))}">
     </div>`;
 
-const createButtonsTemplate = (pointId) =>
+const createButtonsTemplate = (editMode) =>
   `<button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-  <button class="event__reset-btn" type="reset">${pointId ? 'Delete' : 'Cancel'}</button>
-    ${pointId ? (
+  <button class="event__reset-btn" type="reset">${editMode === EditMode.ADD ? 'Cancel' : 'Delete'}</button>
+    ${editMode === EditMode.ADD ? (
     `<button class="event__rollup-btn" type="button">
     <span class="visually-hidden">Open event</span>
   </button>`
   ) : ''}`;
 
-export const createFormTemplate = (pointId, type, destinations, name, dateFrom, dateTo, basePrice, currentPointOffers, offers, currentPointDestination) =>
+export const createFormTemplate = (pointId, type, destinations, name, dateFrom, dateTo, basePrice, currentPointOffers, offers, currentPointDestination, editMode) =>
   `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
       <header class="event__header">
@@ -122,7 +122,7 @@ export const createFormTemplate = (pointId, type, destinations, name, dateFrom, 
         ${createInputDestinationTemplate(pointId, destinations, type, name)}
         ${createTimeEventTemplate(pointId, dateFrom, dateTo)}
         ${createPriceTemplate(pointId, basePrice)}
-        ${createButtonsTemplate(pointId)}
+        ${createButtonsTemplate(editMode)}
       </header>
           <section class="event__details">
           ${createOffresTemplate(offers, currentPointOffers)}
