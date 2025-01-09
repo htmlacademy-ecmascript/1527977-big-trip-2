@@ -1,73 +1,85 @@
-import {remove, render, RenderPosition} from '../framework/render.js';
-import FormEditPointView from '../view/form-edit-point-view.js';
-import {nanoid} from 'nanoid';
-import {EditMode, UserAction, UpdateType} from '../const.js';
-import { isEscapeKey } from '../utils/utils.js';
+import { render, RenderPosition, remove } from '../framework/render';
+import FormEditPointView from '../view/form-edit-point-view';
+import { UserAction, UpdateType, EditType } from '../const';
+import { isEscapeKey } from '../utils/utils';
 
 export default class NewPointPresenter {
   #pointListContainer = null;
-  #destinations = null;
-  #offers = null;
-  #addPointComponent = null;
-  #handleDataChange = null;
+  #handleViewAction = null;
   #handleDestroy = null;
+  #editType = EditType.ADD;
+  #destinationsModel = null;
+  #offersModel = null;
+  #pointAddComponent = null;
 
-  constructor({
-    pointListContainer,
-    destinations,
-    offers,
-    onDataChange,
-    onDestroy
-  }) {
+  constructor({pointListContainer, onHandleViewAction, destinationsModel, offersModel, onNewPointDestroy }) {
     this.#pointListContainer = pointListContainer;
-    this.#destinations = destinations;
-    this.#offers = offers;
-    this.#handleDataChange = onDataChange;
-    this.#handleDestroy = onDestroy;
+    this.#destinationsModel = destinationsModel;
+    this.#offersModel = offersModel;
+    this.#handleViewAction = onHandleViewAction;
+    this.#handleDestroy = onNewPointDestroy;
   }
 
   init() {
-    if (this.#addPointComponent) {
+    if(this.#pointAddComponent !== null) {
       return;
     }
-    this.#addPointComponent = new FormEditPointView({
-      destinations: this.#destinations,
-      offers: this.#offers,
-      onFormSubmit: this.#handleFormSubmit,
+
+    this.#pointAddComponent = new FormEditPointView({
+      offers: this.#offersModel.offers,
+      destinations: this.#destinationsModel.destinations,
+      editType: this.#editType,
       onDeleteClick: this.#handleDeleteClick,
-      editMode: EditMode.ADD,
-      // onFormSubmit: this.#formSubmitHandler,
-      // onFormResetCancel: this.#formResetCancelHandler
+      onSubmitButtonClick: this.#handleFormSubmit,
     });
-    render(this.#addPointComponent, this.#pointListContainer, RenderPosition.AFTERBEGIN);
-    document.addEventListener('keydown', this.#escKeyDownHandler);
+    render(this.#pointAddComponent, this.#pointListContainer, RenderPosition.AFTERBEGIN);
+
+    document.addEventListener('keydown', this.#escKeyDounHaldler);
   }
 
   destroy() {
-    if (this.#addPointComponent) {
+    if(this.#pointAddComponent === null) {
       return;
     }
-    remove(this.#addPointComponent);
-    this.#addPointComponent = null;
+    remove(this.#pointAddComponent);
+    this.#pointAddComponent = null;
     this.#handleDestroy();
-    document.removeEventListener('keydown', this.#escKeyDownHandler);
+    document.removeEventListener('keydown', this.#escKeyDounHaldler);
+  }
+
+  setSaving() {
+    this.#pointAddComponent.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this.#pointAddComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#pointAddComponent.shake(resetFormState);
   }
 
   #handleFormSubmit = (point) => {
-    this.#handleDataChange(
+    this.#handleViewAction(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
-      {id: nanoid(), ...point},
+      point,
     );
-    this.destroy();
   };
 
   #handleDeleteClick = () => {
     this.destroy();
   };
 
-  #escKeyDownHandler = (evt) => {
-    if (isEscapeKey(evt)) {
+  #escKeyDounHaldler = (evt) => {
+    if(isEscapeKey(evt)) {
       evt.preventDefault();
       this.destroy();
     }

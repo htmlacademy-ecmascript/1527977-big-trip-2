@@ -1,4 +1,4 @@
-import {render, RenderPosition} from '../framework/render.js';
+import {render} from '../framework/render.js';
 import ButtonNewEventView from '../view/button-new-event-view.js';
 
 export default class ButtonNewEventPresenter {
@@ -6,12 +6,14 @@ export default class ButtonNewEventPresenter {
   #buttonNewEvent = null;
   #addPointButtonClickHandler = null;
 
-  constructor({headerContainer}) {
+  constructor({
+    headerContainer
+  }) {
     this.#headerContainer = headerContainer;
   }
 
-  init({onAddPointButtonClick}) {
-    this.#addPointButtonClickHandler = onAddPointButtonClick;
+  init({addPointButtonClickHandler}) {
+    this.#addPointButtonClickHandler = addPointButtonClickHandler;
     this.#renderAddPointButton();
   }
 
@@ -27,7 +29,7 @@ export default class ButtonNewEventPresenter {
     this.#buttonNewEvent = new ButtonNewEventView({
       onClick: this.#newButtonClickHandler
     });
-    render(this.#buttonNewEvent, this.#headerContainer, RenderPosition.BEFOREEND);
+    render(this.#buttonNewEvent, this.#headerContainer);
   }
 
   #newButtonClickHandler = () => {

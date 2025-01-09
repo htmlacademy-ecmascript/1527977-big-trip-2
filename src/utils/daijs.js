@@ -37,7 +37,7 @@ const formatDuration = (minuteCount) => {
   return result;
 };
 
-const getDuration = (startInput, endInput) => {
+const calculateDuration = (startInput, endInput) => {
   const startDate = dayjs(startInput);
   const endDate = dayjs(endInput);
 
@@ -51,4 +51,12 @@ const isEventFuture = ({dateFrom}) => dayjs(dateFrom).isAfter(dayjs());
 const isEventPresent = ({dateFrom, dateTo}) => dayjs(new Date()).isBetween(dateFrom, dayjs(dateTo));
 const isEventPast = ({dateTo}) => dayjs(dateTo).isBefore(dayjs());
 
-export { dayjs, formatDate, getDuration, isEventFuture, isEventPresent, isEventPast };
+function getPointsByDate(pointB, pointA) {
+  return dayjs(pointB.dateFrom).diff(dayjs(pointA.dateFrom));
+}
+
+const sortPointDay = (pointA, pointB) => dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom));
+const sortPointTime = (pointA, pointB) => dayjs(pointB.dateTo).diff(dayjs(pointB.dateFrom)) - dayjs(pointA.dateTo).diff(dayjs(pointA.dateFrom));
+const sortPointPrice = (pointA, pointB) => pointB.basePrice - pointA.basePrice;
+
+export { formatDate, calculateDuration, isEventFuture, isEventPresent, isEventPast, getPointsByDate, sortPointDay, sortPointPrice, sortPointTime };
