@@ -4,6 +4,7 @@ import { toUpperCaseFirstLetter } from '../utils/utils';
 
 function createSortItemsTemplate(sortItems, currentSort) {
   return Object.values(sortItems).reduce((acc, sort) => {
+    const labelSort = `<label class="trip-sort__btn" for="sort-${sort.name}">${toUpperCaseFirstLetter(sort.name)}</label>`;
     const sortItem = `<div class="trip-sort__item  trip-sort__item--${sort.name}">
         <input id="sort-${sort.name}"
           class="trip-sort__input  visually-hidden" data-id="${sort.name}"
@@ -11,9 +12,7 @@ function createSortItemsTemplate(sortItems, currentSort) {
           ${sort.isEnabled ? '' : Attribute.DISABLED}
           ${sort.name === currentSort ? Attribute.CHECKED : ''}
         >
-        <label class="trip-sort__btn" for="sort-${sort.name}">
-          ${toUpperCaseFirstLetter(sort.name)}
-        </label>
+        ${labelSort}
       </div>`;
     return acc + sortItem;
   }, '');

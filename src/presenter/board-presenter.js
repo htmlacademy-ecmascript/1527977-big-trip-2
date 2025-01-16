@@ -1,4 +1,4 @@
-import { render, remove, RenderPosition } from '../framework/render';
+import { render, remove } from '../framework/render';
 import UiBlocker from '../framework/ui-blocker/ui-blocker';
 import PointPresenter from './point-presenter';
 import NewPointPresenter from './new-point-presenter';
@@ -111,7 +111,7 @@ export default class BoardPresenter {
       onSortTypeChange: this.#handleSortTypeChange,
     });
 
-    render(this.#sortComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
+    render(this.#sortComponent, this.#boardContainer);
   }
 
   #handleModeChange = () => {

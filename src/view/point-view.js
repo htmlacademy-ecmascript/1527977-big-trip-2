@@ -37,7 +37,6 @@ const createPointViewTemplate = (point, offersApp, destinationsApp) => {
   const dateStart = formatDate(dateFrom, DateFormat.DATE_FULL);
   const dateEnd = formatDate(dateFrom, DateFormat.DATE_FULL);
   const eventDuration = calculateDuration(dateFrom, dateTo);
-
   const offersPoint = offersApp.find((offer) => offer.type === type);
   const offersTemplate = createPointOffersTemplate(offersPoint, offers);
   const destinationPoint = destinationsApp.find((item) => item.id === destination);

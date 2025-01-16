@@ -122,8 +122,8 @@ export default class PointPresenter {
 
   #replacePointToEditPoint() {
     replace(this.#pointEditComponent, this.#pointComponent);
-    document.addEventListener('keydown', this.#escKeyDownHandler);
     this.#handleModeChange();
+    document.addEventListener('keydown', this.#escKeyDownHandler);
     this.#mode = Mode.EDITING;
   }
 
@@ -136,6 +136,7 @@ export default class PointPresenter {
   #escKeyDownHandler = (evt) => {
     if ((isEscapeKey(evt))) {
       evt.preventDefault();
+      this.#pointEditComponent.reset(this.#point);
       this.#replaceEditPointToPoint();
       document.removeEventListener('keydown', this.#escKeyDownHandler);
     }
@@ -147,6 +148,7 @@ export default class PointPresenter {
   };
 
   #onCloseEditButtonClick = () => {
+    this.#pointEditComponent.reset(this.#point);
     this.#replaceEditPointToPoint();
   };
 

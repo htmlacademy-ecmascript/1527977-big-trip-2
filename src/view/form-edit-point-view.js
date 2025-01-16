@@ -58,55 +58,40 @@ function createEditPointOfferContainerTemplate(offersTemplate) {
   );
 }
 
-function createPhotoTemplate(destinationPoint) {
-  if (destinationPoint.pictures.length === 0) {
+function createPhotoTemplate(photos) {
+  if (photos.length === 0) {
     return '';
   }
-  const { pictures } = destinationPoint;
-  return ` <div class="event__photos-container">
-      <div class="event__photos-tape">
-      ${pictures.map((pic) => `<img class="event__photo" src="${pic.src}" alt="${pic.description}">`).join('')}
-      </div>
-    </div>`;
+  const photoItems = photos.reduce((acc, photoItem) => {
+    const photosList = `<img class="event__photo" src="${photoItem.src}" alt="Event photo">`;
+    return acc + photosList;
+  }, '');
+  return `<div class="event__photos-container">
+  <div class="event__photos-tape">
+    ${photoItems}
+  </div>
+</div>`;
 }
 
-function createDescriptionTemplate(destinationPoint) {
-  if (!destinationPoint.description) {
-    return '';
+function createEditPointDestinationContainerTemplate(destinationsApp, pointDestination) {
+  const destinationItem = destinationsApp.find((destination) => destination.id === pointDestination);
+
+  if (typeof destinationItem !== 'undefined' && destinationItem.description !== '') {
+    return `<section class="event__section  event__section--destination">
+              <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+              <p class="event__destination-description">${destinationItem.description}</p>
+              ${createPhotoTemplate(destinationItem.pictures)}
+            </section>`;
   }
-  return `<p class="event__destination-description">${destinationPoint.description}</p>`;
-}
-
-function addPointDestinationHeader(destination) {
-  if (!destination) {
-    return '';
-  }
-  return `<h3 class="event__section-title  event__section-title--destination">Destination</h3>
-  ${destination}`;
-}
-
-function createEditPointDestinationTemplate(destinationPoint) {
-  const destination = `${createDescriptionTemplate(destinationPoint)}${createPhotoTemplate(destinationPoint)}`;
-  return addPointDestinationHeader(destination);
-}
-
-function createEditPointDestinationContainerTemplate(destinationPoint) {
-  if (!destinationPoint) {
-    return '';
-  }
-  return (
-    `<section class="event__section  event__section--destination">
-    ${createEditPointDestinationTemplate(destinationPoint)}
-    </section>`
-  );
+  return '';
 }
 
 function createEditPointButtonNegativeTemplate(editType, point) {
   const { isDisabled, isDeleting } = point;
   return (
     editType === EditType.ADD
-      ? `<button class="event__reset-btn" type="reset"  ${isDisabled ? 'disabled' : ''}>Cancel</button>`
-      : `<button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${isDeleting ? 'Deleting...' : 'Delete'}</button>
+      ? `<button class="event__reset-btn" type="reset"  ${isDisabled ? Attribute.DISABLED : ''}>Cancel</button>`
+      : `<button class="event__reset-btn" type="reset" ${isDisabled ? Attribute.DISABLED : ''}>${isDeleting ? 'Deleting...' : 'Delete'}</button>
       <button class="event__rollup-btn" type="button">
         <span class="visually-hidden">Open event</span>
       </button>`
@@ -122,19 +107,24 @@ function createCityList(destinations) {
   )).join('');
 }
 
+function getPointName(destinationsApp, pointDestination) {
+  const destinationItem = destinationsApp.find((destination) => destination.id === pointDestination);
+
+  if (typeof destinationItem !== 'undefined') {
+    return toUpperCaseFirstLetter(destinationItem.name);
+  }
+
+  return '';
+}
+
 function createEditFormTemplate(point, allOffers, destinationsApp, editType) {
   const { type, basePrice, dateFrom, dateTo, offers, destination, isDisabled, isSaving } = point;
   const eventTypesTemplate = createEditPointEventTypeTemplate(point, type);
   const offersByPointType = allOffers.find((offer) => offer.type === type);
   const offersTemplate = offers ? createEditPointOfferTemplate(offersByPointType, offers, point) : '';
   const offersContainerTemplate = createEditPointOfferContainerTemplate(offersTemplate);
-  let destinationContainerTemplate = '';
-  let titleInputTemplate = '';
-  if (destination) {
-    const destinationPoint = destinationsApp.find((item) => item.id === destination);
-    destinationContainerTemplate = createEditPointDestinationContainerTemplate(destinationPoint, editType);
-    titleInputTemplate = destinationPoint.name;
-  }
+  const destinationContainerTemplate = createEditPointDestinationContainerTemplate(destinationsApp, destination);
+  const pointName = getPointName(destinationsApp, destination);
   const titleLabelTemplate = type ? toUpperCaseFirstLetter(type) : '';
   const buttonNegativeTemplate = createEditPointButtonNegativeTemplate(editType, point);
   return (
@@ -142,12 +132,11 @@ function createEditFormTemplate(point, allOffers, destinationsApp, editType) {
       <form class="event event--edit" action="#" method="post">
         <header class="event__header">
           <div class="event__type-wrapper">
-            <label class="event__type  event__type-btn" for="event-type-toggle-1">
+            <label class="event__type  event__type-btn" for="event-type-toggle">
               <span class="visually-hidden">Choose event type</span>
               <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
             </label>
-            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox" ${isDisabled ? 'disabled' : ''}>
-
+            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox" ${isDisabled ? Attribute.DISABLED : ''}>
             <div class="event__type-list">
               <fieldset class="event__type-group">
                 <legend class="visually-hidden">Event type</legend>
@@ -155,7 +144,6 @@ function createEditFormTemplate(point, allOffers, destinationsApp, editType) {
               </fieldset>
             </div>
           </div>
-
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
               ${titleLabelTemplate}
@@ -165,36 +153,32 @@ function createEditFormTemplate(point, allOffers, destinationsApp, editType) {
             id="event-destination-1"
             type="text"
             name="event-destination"
-            value="${titleInputTemplate}"
+            value="${pointName}"
             list="destination-list-1">
             <datalist id="destination-list-1">
             required
-            ${isDisabled ? 'disabled' : ''}
+            ${isDisabled ? Attribute.DISABLED : ''}
               ${createCityList(destinationsApp)}
             </datalist>
           </div>
-
           <div class="event__field-group  event__field-group--time">
-            <label class="visually-hidden" for="event-start-time-1">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${formatDate(dateFrom, DateFormat.DATE_TIME)}" ${isDisabled ? 'disabled' : ''}>
+            <label class="visually-hidden" for="event-start-time">From</label>
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${formatDate(dateFrom, DateFormat.DATE_TIME)}" ${isDisabled ? Attribute.DISABLED : ''}>
             —
-            <label class="visually-hidden" for="event-end-time-1">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${formatDate(dateTo, DateFormat.DATE_TIME)}" ${isDisabled ? 'disabled' : ''}>
+            <label class="visually-hidden" for="event-end-time">To</label>
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${formatDate(dateTo, DateFormat.DATE_TIME)}" ${isDisabled ? Attribute.DISABLED : ''}>
           </div>
-
           <div class="event__field-group  event__field-group--price">
             <label class="event__label" for="event-price-1">
               <span class="visually-hidden">Price</span>
               €
             </label>
             <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price"
-            value="${he.encode(String(basePrice))}"${isDisabled ? 'disabled' : ''}>
+            value="${he.encode(String(basePrice))}"${isDisabled ? Attribute.DISABLED : ''}>
           </div>
-
-          <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
+          <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? Attribute.DISABLED : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
           ${buttonNegativeTemplate}
         </header>
-
         <section class="event__details">
           ${offersContainerTemplate}
           ${destinationContainerTemplate}
@@ -247,11 +231,8 @@ export default class FormEditPointView extends AbstractStatefulView {
     return createEditFormTemplate(this._state, this.#offers, this.#destinations, this.#editType);
   }
 
-  reset() {
-    this.updateElement({
-      ...this.#point,
-      typeOffers: this.#offers.find((offer) => offer.type === this.point.type)
-    });
+  reset(point) {
+    this.updateElement(FormEditPointView.parsePointToState(point));
   }
 
   _restoreHandlers() {

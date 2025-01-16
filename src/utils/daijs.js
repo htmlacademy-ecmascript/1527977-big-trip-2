@@ -11,40 +11,27 @@ dayjs.extend(isBetween);
 
 const formatDate = (date, view) => date ? dayjs(date).format(view) : '';
 
-const padZero = (num) => String(num).padStart(2, '0');
+const padZero = (num) => (num < 10 ? `0${num}` : num);
 
 const formatDuration = (minuteCount) => {
-  const totalMinutes = dayjs.duration(minuteCount, 'minutes');
+  const totalDuration = dayjs.duration(minuteCount, 'minutes');
 
-  const days = totalMinutes.days();
-  const hours = totalMinutes.hours();
-  const minutes = totalMinutes.minutes();
+  const totalDays = Math.floor(totalDuration.asDays());
+  const hours = totalDuration.hours();
+  const minutes = totalDuration.minutes();
 
-  let result;
-
-  switch (true) {
-    case days > 0:
-      result = `${days < 10 ? padZero(days) : days}D ${padZero(hours)}H ${padZero(minutes)}M`;
-      break;
-    case hours > 0:
-      result = `${padZero(hours)}H ${padZero(minutes)}M`;
-      break;
-    default:
-      result = `${minutes}M`;
-      break;
+  if (totalDuration.asMinutes() < 60) {
+    return `${minutes}M`;
+  } else if (totalDays < 1) {
+    return `${padZero(hours)}H ${padZero(minutes)}M`.trim();
+  } else {
+    return `${padZero(totalDays)}D ${padZero(hours)}H ${padZero(minutes)}M`.trim();
   }
-
-  return result;
 };
 
 const calculateDuration = (startInput, endInput) => {
-  const startDate = dayjs(startInput);
-  const endDate = dayjs(endInput);
-
-  const durationInMinutes = endDate.diff(startDate, 'minute');
-  const formattedDuration = formatDuration(durationInMinutes);
-
-  return formattedDuration;
+  const durationInMinutes = dayjs(endInput).diff(dayjs(startInput), 'minute');
+  return formatDuration(durationInMinutes);
 };
 
 const isEventFuture = ({dateFrom}) => dayjs(dateFrom).isAfter(dayjs());
