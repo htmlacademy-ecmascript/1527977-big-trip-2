@@ -132,7 +132,7 @@ function createEditFormTemplate(point, allOffers, destinationsApp, editType) {
       <form class="event event--edit" action="#" method="post">
         <header class="event__header">
           <div class="event__type-wrapper">
-            <label class="event__type  event__type-btn" for="event-type-toggle">
+            <label class="event__type  event__type-btn" for="event-type-toggle-1">
               <span class="visually-hidden">Choose event type</span>
               <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
             </label>
@@ -173,7 +173,7 @@ function createEditFormTemplate(point, allOffers, destinationsApp, editType) {
               <span class="visually-hidden">Price</span>
               €
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price"
+            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price"
             value="${he.encode(String(basePrice))}"${isDisabled ? Attribute.DISABLED : ''}>
           </div>
           <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? Attribute.DISABLED : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
