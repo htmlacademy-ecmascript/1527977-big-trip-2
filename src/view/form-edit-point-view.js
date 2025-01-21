@@ -99,12 +99,10 @@ function createEditPointButtonNegativeTemplate(editType, point) {
 }
 
 function createCityList(destinations) {
-  if (!destinations) {
-    return '';
-  }
-  return destinations.map((destination) => (
-    `<option value="${destination.name}"></option>`
-  )).join('');
+  return destinations.reduce((acc, destination) => {
+    const destinationOption = `<option value="${toUpperCaseFirstLetter(destination.name)}"></option>`;
+    return acc + destinationOption;
+  }, '');
 }
 
 function getPointName(destinationsApp, pointDestination) {
@@ -118,13 +116,13 @@ function getPointName(destinationsApp, pointDestination) {
 }
 
 function createEditFormTemplate(point, allOffers, destinationsApp, editType) {
-  const { type, basePrice, dateFrom, dateTo, offers, destination, isDisabled, isSaving } = point;
+  const { type, basePrice, dateFrom, dateTo, offers, isDisabled, isSaving } = point;
   const eventTypesTemplate = createEditPointEventTypeTemplate(point, type);
   const offersByPointType = allOffers.find((offer) => offer.type === type);
   const offersTemplate = offers ? createEditPointOfferTemplate(offersByPointType, offers, point) : '';
   const offersContainerTemplate = createEditPointOfferContainerTemplate(offersTemplate);
-  const destinationContainerTemplate = createEditPointDestinationContainerTemplate(destinationsApp, destination);
-  const pointName = getPointName(destinationsApp, destination);
+  const destinationContainerTemplate = createEditPointDestinationContainerTemplate(destinationsApp, point.destination);
+  const pointName = getPointName(destinationsApp, point.destination);
   const titleLabelTemplate = type ? toUpperCaseFirstLetter(type) : '';
   const buttonNegativeTemplate = createEditPointButtonNegativeTemplate(editType, point);
   return (
@@ -259,7 +257,7 @@ export default class FormEditPointView extends AbstractStatefulView {
 
   #closeOpenEditButtonClickHandler = (evt) => {
     evt.preventDefault();
-    this.#onCloseEditButtonClick(FormEditPointView.parseStateToPoint(this.#point));
+    this.#onCloseEditButtonClick();
   };
 
   #submitButtonClickHandler = (evt) => {
@@ -280,14 +278,14 @@ export default class FormEditPointView extends AbstractStatefulView {
 
   #destinationChangeHandler = (evt) => {
     evt.preventDefault();
-    const targetDestination = evt.target.value;
-    if (targetDestination) {
-      let newDestination = this.#destinations.find((item) => item.name === targetDestination);
-      newDestination = newDestination ? newDestination : '';
-      this.updateElement({
-        destination: newDestination.id
-      });
+    const targetDestination = this.#destinations.find((destination) => destination.name.toLowerCase() === evt.target.value.toLowerCase());
+    if (typeof targetDestination === 'undefined') {
+      evt.target.value = '';
+      return;
     }
+    this.updateElement({
+      destination: targetDestination.id
+    });
   };
 
   #deleteClickHandler = (evt) => {
@@ -351,11 +349,9 @@ export default class FormEditPointView extends AbstractStatefulView {
     );
   }
 
-  static parsePointToState(point, pointDestination, typeOffers) {
+  static parsePointToState(point) {
     return {
       ...point,
-      destination: pointDestination,
-      typeOffers,
       isDisabled: false,
       isSaving: false,
       isDeleting: false,
@@ -363,8 +359,7 @@ export default class FormEditPointView extends AbstractStatefulView {
   }
 
   static parseStateToPoint(state) {
-    const point = { ...state,
-    };
+    const point = { ...state };
     delete point.typeOffers;
     delete point.isDisabled;
     delete point.isSaving;
