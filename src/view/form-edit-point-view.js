@@ -92,7 +92,7 @@ function createEditPointButtonNegativeTemplate(editType, point) {
     editType === EditType.ADD
       ? `<button class="event__reset-btn" type="reset"  ${isDisabled ? Attribute.DISABLED : ''}>Cancel</button>`
       : `<button class="event__reset-btn" type="reset" ${isDisabled ? Attribute.DISABLED : ''}>${isDeleting ? 'Deleting...' : 'Delete'}</button>
-      <button class="event__rollup-btn" type="button">
+      <button class="event__rollup-btn" type="button" ${isDisabled ? Attribute.DISABLED : ''}>
         <span class="visually-hidden">Open event</span>
       </button>`
   );
