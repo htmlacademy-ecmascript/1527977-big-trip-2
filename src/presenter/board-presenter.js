@@ -8,7 +8,6 @@ import SortView from '../view/sort-view';
 import { filter } from '../utils/filter';
 import { sortPointDay, sortPointPrice, sortPointTime } from '../utils/daijs';
 import { FilterType, MessageText, TimeLimit, SortType, UpdateType, UserAction } from '../const';
-
 export default class BoardPresenter {
   #eventsList = new ListView();
   #boardContainer = null;
@@ -28,6 +27,7 @@ export default class BoardPresenter {
   #onNewPointDestroy = null;
   #pointsLoading = null;
   #isLoading = true;
+  #isCreatingPoint = false;
   #newPointPresenter = null;
   #uiBlocker = new UiBlocker({
     lowerLimit: TimeLimit.LOWER,
@@ -41,13 +41,13 @@ export default class BoardPresenter {
     this.#offersModel = offersModel;
     this.#destinationsModel = destinationsModel;
     this.#onNewPointDestroy = onNewPointDestroy;
-
     this.#newPointPresenter = new NewPointPresenter({
       pointListContainer: this.#eventsList.element,
       destinationsModel: this.#destinationsModel,
       offersModel: this.#offersModel,
       onHandleViewAction: this.#handleViewAction,
-      onNewPointDestroy: this.#onNewPointDestroy,
+      // onNewPointDestroy: this.#handleNewPointFormClose
+      onNewPointDestroy: this.#handleNewPointFormClose.bind(this),
     });
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
@@ -57,7 +57,6 @@ export default class BoardPresenter {
     this.#currentFilterType = this.#filterModel.filter;
     const points = this.#pointsModel.points;
     const filteredPoints = filter[this.#currentFilterType](points);
-
     switch (this.#currentSortType) {
       case SortType.TIME.name:
         return [...filteredPoints].toSorted(sortPointTime);
@@ -73,6 +72,7 @@ export default class BoardPresenter {
   }
 
   createPoint() {
+    this.#isCreatingPoint = true;
     if (this.#messageComponent) {
       remove(this.#messageComponent);
       this.#messageComponent = null;
@@ -97,11 +97,19 @@ export default class BoardPresenter {
     }
   }
 
-  #renderMessage() {
-    if (!this.#messageComponent) {
-      this.#messageComponent = new MessageView({ message: MessageText[this.#currentFilterType] });
-      render(this.#messageComponent, this.#boardContainer);
+  #handleNewPointFormClose() {
+    this.#isCreatingPoint = false;
+    if (this.#sortComponent) {
+      remove(this.#sortComponent);
+      this.#sortComponent = null;
     }
+    this.#renderBoard();
+    this.#onNewPointDestroy();
+  }
+
+  #renderMessage() {
+    this.#messageComponent = new MessageView({ message: MessageText[this.#currentFilterType] });
+    render(this.#messageComponent, this.#boardContainer);
   }
 
   #renderBoard() {
@@ -109,7 +117,7 @@ export default class BoardPresenter {
       this.#renderLoading();
       return;
     }
-    if (!this.points.length) {
+    if (!this.points.length && !this.#isCreatingPoint) {
       this.#renderMessage();
       return;
     }
@@ -132,7 +140,6 @@ export default class BoardPresenter {
       currentSort: this.#currentSortType,
       onSortTypeChange: this.#handleSortTypeChange,
     });
-
     render(this.#sortComponent, this.#boardContainer);
   }
 
@@ -146,17 +153,13 @@ export default class BoardPresenter {
     this.#newPointPresenter.destroy();
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
-
     if (this.#pointsLoading) {
       remove(this.#pointsLoading);
     }
-
     remove(this.#sortComponent);
-
     if (this.#messageComponent) {
       remove(this.#messageComponent);
     }
-
     if (resetSortType) {
       this.#currentSortType = SortType.DEFAULT.name;
     }
@@ -183,7 +186,6 @@ export default class BoardPresenter {
 
   #handleViewAction = async (actionType, updateType, update) => {
     this.#uiBlocker.block();
-
     switch (actionType) {
       case UserAction.UPDATE_POINT:
         this.#pointPresenters.get(update.id).setSaving();

@@ -43,8 +43,8 @@ export default class NewPointPresenter {
     }
     remove(this.#pointAddComponent);
     this.#pointAddComponent = null;
-    this.#handleDestroy();
     document.removeEventListener('keydown', this.#escKeyDounHaldler);
+    this.#handleDestroy();
   }
 
   setSaving() {

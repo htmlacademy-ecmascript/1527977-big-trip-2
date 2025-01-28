@@ -30,6 +30,7 @@ const boardPresenter = new BoardPresenter({
   pointsModel: pointsModel,
   offersModel: offersModel,
   destinationsModel: destinationsModel,
+  isCreatingPoint: false,
   onNewPointDestroy: handleNewPointFormClose
 });
 
