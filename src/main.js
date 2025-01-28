@@ -46,11 +46,11 @@ const totalInfoPresenter = new TotalInfoPresenter({
 
 function handleNewPointButtonClick() {
   boardPresenter.createPoint();
-  newPointButtonComponent.element.disabled = true;
+  newPointButtonComponent.disableButton();
 }
 
 function handleNewPointFormClose() {
-  newPointButtonComponent.element.disabled = false;
+  newPointButtonComponent.enableButton();
 }
 
 const filterPresenter = new FilterPresenter({

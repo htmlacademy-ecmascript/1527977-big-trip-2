@@ -10,7 +10,6 @@ export default class ButtonNewEventView extends AbstractView {
   constructor({onButtonClick}) {
     super();
     this.#handleButtonClick = onButtonClick;
-    this.#handleNewPointDisabled();
     this.#setEventListeners();
   }
 
@@ -22,12 +21,16 @@ export default class ButtonNewEventView extends AbstractView {
     this.element.addEventListener('click', this.#buttonClickHandler);
   }
 
-  #handleNewPointDisabled = () => {
-    this.element.disabled = true;
-  };
-
   #buttonClickHandler = (evt) => {
     evt.preventDefault();
     this.#handleButtonClick();
   };
+
+  disableButton() {
+    this.element.disabled = true;
+  }
+
+  enableButton() {
+    this.element.disabled = false;
+  }
 }

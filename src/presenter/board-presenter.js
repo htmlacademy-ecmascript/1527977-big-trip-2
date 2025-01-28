@@ -21,6 +21,7 @@ export default class BoardPresenter {
   #destinations = [];
   #sortComponent = null;
   #messageComponent = null;
+  #errorComponent = null;
   #currentFilterType = FilterType.EVERYTHING;
   #currentSortType = SortType.DEFAULT.name;
   #pointsError = null;
@@ -72,14 +73,35 @@ export default class BoardPresenter {
   }
 
   createPoint() {
+    if (this.#messageComponent) {
+      remove(this.#messageComponent);
+      this.#messageComponent = null;
+    }
+
+    if (this.#pointsError) {
+      remove(this.#pointsError);
+      this.#pointsError = null;
+    }
+
+    this.#clearErrorState();
     this.#currentSortType = SortType.DEFAULT.name;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this.#newPointPresenter.init();
+    render(this.#eventsList, this.#boardContainer);
+  }
+
+  #clearErrorState() {
+    if (this.#errorComponent) {
+      remove(this.#errorComponent);
+      this.#errorComponent = null;
+    }
   }
 
   #renderMessage() {
-    this.#messageComponent = new MessageView({ message: MessageText[this.#currentFilterType] });
-    render(this.#messageComponent, this.#boardContainer);
+    if (!this.#messageComponent) {
+      this.#messageComponent = new MessageView({ message: MessageText[this.#currentFilterType] });
+      render(this.#messageComponent, this.#boardContainer);
+    }
   }
 
   #renderBoard() {
