@@ -1,4 +1,4 @@
-const AUTHORIZATION = 'Basic itdlerjh58258115';
+const AUTHORIZATION = 'Basic itdlerjh51158115';
 const END_POINT = 'https://22.objects.htmlacademy.pro/big-trip';
 const DESTINATIONS_COUNT = 3;
 const EVENT_TYPE_DEFAULT = 'flight';

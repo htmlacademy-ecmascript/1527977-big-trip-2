@@ -46,8 +46,7 @@ export default class BoardPresenter {
       destinationsModel: this.#destinationsModel,
       offersModel: this.#offersModel,
       onHandleViewAction: this.#handleViewAction,
-      // onNewPointDestroy: this.#handleNewPointFormClose
-      onNewPointDestroy: this.#handleNewPointFormClose.bind(this),
+      onNewPointDestroy: () => this.#handleNewPointFormClose(),
     });
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
@@ -77,12 +76,10 @@ export default class BoardPresenter {
       remove(this.#messageComponent);
       this.#messageComponent = null;
     }
-
     if (this.#pointsError) {
       remove(this.#pointsError);
       this.#pointsError = null;
     }
-
     this.#clearErrorState();
     this.#currentSortType = SortType.DEFAULT.name;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
@@ -99,11 +96,6 @@ export default class BoardPresenter {
 
   #handleNewPointFormClose() {
     this.#isCreatingPoint = false;
-    if (this.#sortComponent) {
-      remove(this.#sortComponent);
-      this.#sortComponent = null;
-    }
-    this.#renderBoard();
     this.#onNewPointDestroy();
   }
 
