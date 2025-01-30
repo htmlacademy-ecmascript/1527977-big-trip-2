@@ -1,23 +1,28 @@
-import { offers } from '../mock/offers.js';
-import Observable from '../framework/observable.js';
+export default class OffersModel {
+  #offers = [];
+  #offersApiService = null;
 
-export default class OffersModel extends Observable {
-  #offers;
-
-  constructor() {
-    super();
-    this.#offers = [];
-  }
-
-  init() {
-    this.#offers = offers;
+  constructor({ offersApiService }) {
+    this.#offersApiService = offersApiService;
   }
 
   get offers() {
     return this.#offers;
   }
 
-  getOffersByType(type) {
-    return this.#offers?.find((offer) => offer.type === type)?.offers ?? {};
+  async init() {
+    try {
+      this.#offers = await this.#offersApiService.offers;
+    } catch(err) {
+      this.offers = [];
+    }
   }
+
+  getOffersByType(type) {
+    const offersByType = this.#offers.find((offer) => offer.type === type) ?? [];
+    return offersByType;
+  }
+
 }
+
+

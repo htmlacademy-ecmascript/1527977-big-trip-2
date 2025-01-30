@@ -1,19 +1,21 @@
-import AbstractView from '../framework/view/abstract-view.js';
-import {MessageText} from '../const.js';
+import AbstractView from '../framework/view/abstract-view';
 
-function createMessageTemplate(filterType) {
-  return `<p class="trip-events__msg">${MessageText[filterType]}</p>`;
+
+function createEmptyListPointTemplate(message) {
+  return `<p class="trip-events__msg">${message}</p>`;
 }
 
-export default class Message extends AbstractView {
-  #filterType = null;
+export default class MessageView extends AbstractView {
+  #message = null;
 
-  constructor(filterType) {
+  constructor({message}) {
+
     super();
-    this.#filterType = filterType;
+    this.#message = message;
   }
 
   get template() {
-    return createMessageTemplate(this.#filterType);
+    return createEmptyListPointTemplate(this.#message);
   }
 }
+

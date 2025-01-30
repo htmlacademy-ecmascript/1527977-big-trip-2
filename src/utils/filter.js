@@ -1,11 +1,11 @@
-import {FilterTypes} from '../const';
-import {isEventFuture, isEventPresent, isEventPast} from './daijs';
+import { FilterType } from '../const';
+import { isEventFuture, isEventPresent, isEventPast} from './daijs';
 
 const filter = {
-  [FilterTypes.EVERYTHING]: (points) => points,
-  [FilterTypes.FUTURE]: (points) => points.filter((point) => isEventFuture(point)),
-  [FilterTypes.PRESENT]: (points) => points.filter((point) => isEventPresent(point)),
-  [FilterTypes.PAST]: (points) => points.filter((point) => isEventPast(point)),
+  [FilterType.EVERYTHING]: (points) => points,
+  [FilterType.FUTURE]: (points) => points.filter((point) => isEventFuture(point)),
+  [FilterType.PRESENT]: (points) => points.filter((point) => isEventPresent(point)),
+  [FilterType.PAST]: (points) => points.filter((point) => isEventPast(point)),
 };
 
-export {filter};
+export { filter };
